@@ -8,7 +8,7 @@ class List extends Component {
         const authors = [];
         for(let i=10000; i>0; i--) {
             authors.push({
-                name: "Author " + (Math.random() * numAuthors * 1000),
+                name: "Author " + ((Math.floor(Math.random() * numAuthors) * 1000)),
                 gender: Math.floor(Math.random() * 2) ? "M" : "F"
             });
         }
@@ -58,32 +58,55 @@ class List extends Component {
     }
 
     render() {
+        let genderAllClasses = "btn btn-secondary";
+        let genderMClasses = "btn btn-secondary";
+        let genderFClasses = "btn btn-secondary";
+        if(!this.state.genderFilter) {
+            genderAllClasses += " active";
+        } else if(this.state.genderFilter === 'M') {
+            genderMClasses += " active";
+        } else if(this.state.genderFilter === 'F') {
+            genderFClasses += " active";
+        }
         return (
             <React.Fragment>
                 <div>
-                    <button onClick={this.orderByBookName}>order by book name</button>
-                    <button onClick={this.orderByAuthorName}>order by author name</button>
-                    <input type="radio" name="genres" onClick={this.genreChange} value="all" />all genres
-                    {this.state.genres.map(genre => (<span key={genre}>
-                        <input type="radio" name="genres" onClick={this.genreChange} value={genre}/>{genre}
-                        </span>)
-                    )}
-                    <input type="radio" name="gender" onClick={this.genderChange} value="all" />all genders
-                    <input type="radio" name="gender" onClick={this.genderChange} value="M" />male authors
-                    <input type="radio" name="gender" onClick={this.genderChange} value="F" />female authors
+                    <button onClick={this.orderByBookName} className="btn btn-primary mt-1 ml-1 mb-1">order by book name</button>
+                    <button onClick={this.orderByAuthorName} className="btn btn-primary m-1">order by author name</button><br/>
+                    <div className="btn-group btn-group-toggle ml-1 mr-1" data-toggle="buttons">
+                        <label className={"btn btn-secondary " + (this.state.genreFilter ? "" : "active")}>
+                            <input type="radio" name="genres" onClick={this.genreChange} value="all" defaultChecked/>all genres
+                        </label>
+                        {this.state.genres.map(genre => (
+                            <label key={genre} className={"btn btn-secondary " + (this.state.genreFilter === genre ? "active" : "")}>
+                                <input type="radio" name="genres" onClick={this.genreChange} value={genre}/>{genre}
+                            </label>)
+                        )}
+                    </div><br/>
+                    <div className="btn-group btn-group-toggle m-1" data-toggle="buttons">
+                        <label className={genderAllClasses}>
+                            <input type="radio" name="gender" onClick={this.genderChange} value="all"/>all genders
+                        </label>
+                        <label className={genderMClasses}>
+                            <input type="radio" name="gender" onClick={this.genderChange} value="M" />male authors
+                        </label>
+                        <label className={genderFClasses}>
+                            <input type="radio" name="gender" onClick={this.genderChange} value="F" />female authors
+                        </label>
+                    </div>
                 </div>
                 <div onScroll={this.handleScroll}>
-                    <ul>
+                    <ul className="list-group">
                         {
                             this.state.visibleList
                                 .map(item => {
-                                    let classes = "";
-                                    if(item.genre === "horor" && item.publishedDate.getUTCMonth() === 9 && item.publishedDate.getUTCDate() === 31) {
+                                    let classes = "list-group-item ";
+                                    if(item.genre === "horor" && item.publishedDate.getMonth() === 9 && item.publishedDate.getDate() === 31) {
                                         classes += "halloween";
-                                    } else if(item.genre === "finance" && item.publishedDate.getUTCDay() === 5) {
+                                    } else if(item.genre === "finance" && item.publishedDate.getDay() === 5) {
                                         let nextFriday = new Date(item.publishedDate.getTime());
                                         nextFriday.setDate(nextFriday.getDate() + 7);
-                                        if(nextFriday.getMonth() === item.publishedDate.getMonth()) {
+                                        if(nextFriday.getMonth() !== item.publishedDate.getMonth()) {
                                             classes += "business";
                                         }
                                     }
@@ -91,7 +114,7 @@ class List extends Component {
                                         <li key={item.isbn} className={classes}>
                                             {item.name + " by " + item.author.name
                                                 + ", genre: " + item.genre
-                                                + ", published on: " + item.publishedDate}
+                                                + ", published on: " + item.publishedDate.toDateString()}
                                         </li>
                                     );
                                 })
