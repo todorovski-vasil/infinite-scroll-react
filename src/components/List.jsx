@@ -12,7 +12,7 @@ class List extends Component {
                 gender: Math.floor(Math.random() * 2) ? "M" : "F"
             });
         }
-        const genres = ["fiction", "drama", "poetry", "finance", "horor"];
+        const genres = ["fiction", "drama", "poetry", "finance", "horror"];
         const list = [];
         for(let i=1000000; i>0; i--) {
             let publishedDate = new Date((Math.floor(Math.random() * 1020) + 1000) +
@@ -21,7 +21,7 @@ class List extends Component {
                 );
             const author = authors[Math.floor(Math.random() * authors.length)];
             const genre = genres[Math.floor(Math.random() * genres.length)];
-            if(i % 5 === 4 && genre === "horor") {
+            if(i % 5 === 4 && genre === "horror") {
                 publishedDate = new Date((Math.floor(Math.random() * 1020) + 1000) + "-10-31");
             }
             list.push({
@@ -101,7 +101,7 @@ class List extends Component {
                             this.state.visibleList
                                 .map(item => {
                                     let classes = "list-group-item ";
-                                    if(item.genre === "horor" && item.publishedDate.getMonth() === 9 && item.publishedDate.getDate() === 31) {
+                                    if(item.genre === "horror" && item.publishedDate.getMonth() === 9 && item.publishedDate.getDate() === 31) {
                                         classes += "halloween";
                                     } else if(item.genre === "finance" && item.publishedDate.getDay() === 5) {
                                         let nextFriday = new Date(item.publishedDate.getTime());
@@ -112,7 +112,7 @@ class List extends Component {
                                     }
                                     return (
                                         <li key={item.isbn} className={classes}>
-                                            {item.name + " by " + item.author.name
+                                            {item.name + " by " + (item.author.gender === "M" ? "Mr. " : "Mrs. ") +  item.author.name
                                                 + ", genre: " + item.genre
                                                 + ", published on: " + item.publishedDate.toDateString()}
                                         </li>
@@ -222,8 +222,8 @@ class List extends Component {
             newState.genreFilter = null;
         } else {
             newState.genreFilter = event.target.value;
-        }        
-        newState.availableList = this.state.list.sort((a, b) => a.author.name > b.author.name ? 1 : -1);
+        }
+        newState.availableList = [...this.state.list];
         if(newState.genreFilter !== null) {
             newState.availableList = newState.availableList.filter((item, index) => item.genre === newState.genreFilter);
         }
@@ -246,8 +246,8 @@ class List extends Component {
             newState.genderFilter = null;
         } else {
             newState.genderFilter = event.target.value;
-        }        
-        newState.availableList = this.state.list.sort((a, b) => a.author.name > b.author.name ? 1 : -1);
+        }
+        newState.availableList = [...this.state.list];
         if(newState.genreFilter !== null) {
             newState.availableList = newState.availableList.filter((item, index) => item.genre === newState.genreFilter);
         }
