@@ -20,9 +20,9 @@ class List extends Component {
                 name: "Book about " + Math.floor(Math.random() * 1000000),
                 author: authors[Math.floor(Math.random() * authors.length)],
                 genre: genres[Math.floor(Math.random() * genres.length)],
-                publishedDate: new Date((Math.floor(Math.random() * 2020) + 
+                publishedDate: new Date((Math.floor(Math.random() * 1020) + 1000) +
                     "-" + ((Math.floor(Math.random() * 12) + 1)) + 
-                    "-" + ((Math.floor(Math.random() * 28) + 1)))
+                    "-" + ((Math.floor(Math.random() * 28) + 1))
                     )
             })
         }
@@ -45,25 +45,31 @@ class List extends Component {
 
     componentDidUpdate() {
         this.handleScrollEvents = true;
+        // this.handleScroll();
     }
 
     render() {
         return (
-            <div onScroll={this.handleScroll}>
-                <ul >
-                    {
-                        this.state.visibleList
-                            // .filter((item, index) => index < 1000)
-                            .map(item => (
-                                <li key={item.isbn}>
-                                    {item.name + " by " + item.author.name
-                                        + ", genre: " + item.genre
-                                        + ", published on: " + item.publishedDate}
-                                </li>
-                            ))
-                    }
-                </ul>
-            </div>
+            <React.Fragment>
+                <div className="toolbar">
+                    <button>order by...</button>
+                </div>
+                <div className="scrolled-content-wrapper" onScroll={this.handleScroll}>
+                    <ul className="list">
+                        {
+                            this.state.visibleList
+                                // .filter((item, index) => index < 1000)
+                                .map(item => (
+                                    <li key={item.isbn}>
+                                        {item.name + " by " + item.author.name
+                                            + ", genre: " + item.genre
+                                            + ", published on: " + item.publishedDate}
+                                    </li>
+                                ))
+                        }
+                    </ul>
+                </div>
+            </React.Fragment>
         );
     }
 
@@ -106,9 +112,7 @@ class List extends Component {
             // console.log(event);
 
             var lastLi = document.querySelector("ul > li:last-child");
-            var firstLi = document.querySelector("ul > li:first-child");
             var lastLiOffset = lastLi.offsetTop + lastLi.clientHeight;
-            var firstLiOffset = firstLi.offsetTop + firstLi.clientHeight;
             var pageOffset = window.pageYOffset + window.innerHeight;
             if (pageOffset > (lastLiOffset * 0.9)) {
                 this.handleScrollEvents = false;
