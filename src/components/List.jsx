@@ -70,7 +70,7 @@ class List extends Component {
         }
         return (
             <React.Fragment>
-                <div>
+                <div className="navbar">
                     <button onClick={this.orderByBookName} className="btn btn-primary mt-1 ml-1 mb-1">order by book name</button>
                     <button onClick={this.orderByAuthorName} className="btn btn-primary m-1">order by author name</button><br/>
                     <div className="btn-group btn-group-toggle ml-1 mr-1" data-toggle="buttons">
@@ -95,7 +95,7 @@ class List extends Component {
                         </label>
                     </div>
                 </div>
-                <div onScroll={this.handleScroll}>
+                <div className="container infiniteList" onScroll={this.handleScroll}>
                     <ul className="list-group">
                         {
                             this.state.visibleList

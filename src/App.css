@@ -1,6 +1,6 @@
-.App {
+/* .App {
   text-align: center;
-}
+} */
 
 .halloween {
   background-color: orange;
@@ -9,3 +9,39 @@
 .business {
   background-color: gray;
 }
+
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+  height: 4rem;
+  z-index: 200;
+}
+
+.infiniteList {
+  margin-top: 4rem;
+  z-index: 100;
+}
+
+@media (max-width: 1226px) {
+  .navbar {
+    height: 7rem;
+  }
+
+  .infiniteList {
+    margin-top: 7rem;
+  }
+
+  @media (max-width: 868px) {
+    .navbar {
+      height: 10rem;
+    }
+  
+    .infiniteList {
+      margin-top: 10rem;
+    }
+  }
+}
+
