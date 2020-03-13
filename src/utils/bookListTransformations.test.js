@@ -153,6 +153,24 @@ test('ordering by book name works correctly', () => {
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
             )
+        },
+        {
+            isbn: '1000000-4265253843.525467',
+            name: 'Book about 728078',
+            author: { name: 'Author 4744566', gender: 'M' },
+            genre: 'poetry',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            )
+        },
+        {
+            isbn: '1000000-4265253843.521234',
+            name: 'Book about 728120',
+            author: { name: 'Author 4744186', gender: 'M' },
+            genre: 'poetry',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            )
         }
     ];
 
@@ -160,7 +178,7 @@ test('ordering by book name works correctly', () => {
         genreFilter: null,
         genderFilter: 'M'
     });
-    expect(orderedBookstoreByMaleAuthors.length).toBe(1);
+    expect(orderedBookstoreByMaleAuthors.length).toBe(3);
     expect(orderedBookstoreByMaleAuthors[0].isbn).toBe(testBooks[1].isbn);
 
     const orderedFinanceBookstore = orderByBookName(testBooks, {
@@ -169,6 +187,13 @@ test('ordering by book name works correctly', () => {
     });
     expect(orderedFinanceBookstore.length).toBe(1);
     expect(orderedFinanceBookstore[0].isbn).toBe(testBooks[0].isbn);
+
+    const orderedPoetryByMaleBookstore = orderByBookName(testBooks, {
+        genreFilter: 'poetry',
+        genderFilter: 'M'
+    });
+    expect(orderedPoetryByMaleBookstore.length).toBe(2);
+    expect(orderedPoetryByMaleBookstore[0].isbn).toBe(testBooks[2].isbn);
 
     const orderedBookstore = orderByBookName(testBooks, {
         genreFilter: null,

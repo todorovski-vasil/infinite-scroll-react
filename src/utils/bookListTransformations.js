@@ -17,15 +17,11 @@ const filterByGenre = (books, genreFilter) =>
 const applyFilters = (books, { genreFilter, genderFilter }) =>
     filterByGender(filterByGenre(books, genreFilter), genderFilter);
 
-const orderByBookName = (books, { genreFilter, genderFilter }) => {
-    let sortedBooks = sortByBookName(books);
-    return applyFilters(sortedBooks, { genreFilter, genderFilter });
-};
+const orderByBookName = (books, { genreFilter, genderFilter }) =>
+    applyFilters(sortByBookName(books), { genreFilter, genderFilter });
 
-const orderByAuthorName = (books, { genreFilter, genderFilter }) => {
-    const sortedBooks = sortByAuthorName(books);
-    return applyFilters(sortedBooks, { genreFilter, genderFilter });
-};
+const orderByAuthorName = (books, { genreFilter, genderFilter }) =>
+    applyFilters(sortByAuthorName(books), { genreFilter, genderFilter });
 
 export {
     sortByBookName,

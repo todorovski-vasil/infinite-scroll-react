@@ -1,5 +1,9 @@
 import React from 'react';
 
+const ALL = 'all';
+const MALE = 'M',
+    FEMALE = 'F';
+
 function GenreButton(props) {
     let genreLabel = 'all genres';
     let defaultChecked = false;
@@ -20,7 +24,7 @@ function GenreButton(props) {
                 type='radio'
                 name='genres'
                 onClick={props.onClick}
-                value={props.genre !== '' ? props.genre : 'all'}
+                value={props.genre !== '' ? props.genre : ALL}
                 defaultChecked={defaultChecked}
             />
             {genreLabel}
@@ -33,13 +37,6 @@ function Navbar(props) {
     const maleAuthorsLabel = 'male authors';
     const femaleAuthorsLabel = 'female authors';
 
-    // const allGenresSelector = (
-    //     <GenreButton
-    //         genre={''}
-    //         genreFilter={props.genreFilter}
-    //         onClick={props.genreChange}
-    //     ></GenreButton>
-    // );
     const genreSelector = ['', ...props.genres].map(genre => (
         <GenreButton
             key={genre}
@@ -53,7 +50,6 @@ function Navbar(props) {
             className='btn-group btn-group-toggle ml-1 mr-1'
             data-toggle='buttons'
         >
-            {/* {allGenresSelector} */}
             {genreSelector}
         </div>
     );
@@ -64,9 +60,9 @@ function Navbar(props) {
 
     if (!props.genderFilter) {
         genderAllClasses += ' active';
-    } else if (props.genderFilter === 'M') {
+    } else if (props.genderFilter === MALE) {
         genderMClasses += ' active';
-    } else if (props.genderFilter === 'F') {
+    } else if (props.genderFilter === FEMALE) {
         genderFClasses += ' active';
     }
 
@@ -96,7 +92,7 @@ function Navbar(props) {
                         type='radio'
                         name='gender'
                         onClick={props.onGenderChange}
-                        value='all'
+                        value={ALL}
                     />
                     {allGendersLabel}
                 </label>
@@ -105,7 +101,7 @@ function Navbar(props) {
                         type='radio'
                         name='gender'
                         onClick={props.onGenderChange}
-                        value='M'
+                        value={MALE}
                     />
                     {maleAuthorsLabel}
                 </label>
@@ -114,7 +110,7 @@ function Navbar(props) {
                         type='radio'
                         name='gender'
                         onClick={props.onGenderChange}
-                        value='F'
+                        value={FEMALE}
                     />
                     {femaleAuthorsLabel}
                 </label>

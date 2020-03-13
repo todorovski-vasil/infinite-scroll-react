@@ -6,6 +6,8 @@ const FICTION = 'fiction',
     POETRY = 'poetry',
     FINANCE = 'finance',
     HOROR = 'horror';
+const MALE = 'M',
+    FEMALE = 'F';
 const genres = [FICTION, DRAMA, POETRY, FINANCE, HOROR];
 const books = [];
 const authors = [];
@@ -15,7 +17,7 @@ const getBookstore = () => {
         for (let i = numAuthors; i > 0; i--) {
             authors.push({
                 name: 'Author ' + i + Math.floor(Math.random() * numAuthors),
-                gender: Math.floor(Math.random() * 2) ? 'M' : 'F'
+                gender: Math.floor(Math.random() * 2) ? MALE : FEMALE
             });
         }
     }

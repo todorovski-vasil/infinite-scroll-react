@@ -1,10 +1,8 @@
 import React from 'react';
 
-const FICTION = 'fiction',
-    DRAMA = 'drama',
-    POETRY = 'poetry',
-    FINANCE = 'finance',
+const FINANCE = 'finance',
     HOROR = 'horror';
+const MALE = 'M';
 
 const getCSSClasses = book => {
     let bookClasses = 'list-group-item ';
@@ -28,7 +26,7 @@ const getCSSClasses = book => {
 const getLabel = book =>
     book.name +
     ' by ' +
-    (book.author.gender === 'M' ? 'Mr. ' : 'Mrs. ') +
+    (book.author.gender === MALE ? 'Mr. ' : 'Mrs. ') +
     book.author.name +
     ', genre: ' +
     book.genre +
