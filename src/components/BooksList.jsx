@@ -1,17 +1,33 @@
 import React, { useState, useRef, useCallback } from 'react';
 import {
-    orderByBookName,
-    orderByAuthorName,
+    sortByBookName,
+    sortByAuthorName,
     applyFilters
 } from '../utils/bookListTransformations';
 import Navbar from './Navbar';
 import { useEffect } from 'react';
 import InfiniteList from './InfiniteList';
+import Loader from './Loader/Loader';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
+const PAGE_WINDOW_SHIFT = 0.1;
 
-let handleScrollEvents = true;
+const generateSetterWithCallback = reactSetter => {
+    return (loading, callback) => {
+        if (typeof loading == 'function') {
+            reactSetter(l => {
+                setTimeout(callback, 0);
+                return loading(l);
+            });
+        } else {
+            reactSetter(() => {
+                setTimeout(callback, 0);
+                return loading;
+            });
+        }
+    };
+};
 
 function BooksList(props) {
     let [startIndex, setStartIndex] = useState(0);
@@ -24,51 +40,50 @@ function BooksList(props) {
                 index > startIndex && index < startIndex + PAGE_SIZE
         )
     );
+    const [loading, setLoading] = useState(false);
+    const setLoadingState = generateSetterWithCallback(setLoading);
 
     const availableBooksRef = useRef(availableBooks);
     useEffect(() => {
         availableBooksRef.current = availableBooks;
     }, [availableBooks]);
 
-    const loadDown = useCallback(() => {
-        setStartIndex(i => {
-            if (i + PAGE_SIZE < availableBooksRef.current.length) {
-                return i + 100;
-            } else {
-                handleScrollEvents = true;
-                return i;
-            }
-        });
-    }, [setStartIndex]);
-
-    const loadUp = useCallback(() => {
-        setStartIndex(i => {
-            if (i >= 100) {
-                return i - 100;
-            } else {
-                handleScrollEvents = true;
-                return i;
-            }
-        });
-    }, [setStartIndex]);
-
-    const handleScroll = useCallback(
-        event => {
-            if (handleScrollEvents) {
-                var lastLi = document.querySelector('ul > li:last-child');
-                var lastLiOffset = lastLi.offsetTop + lastLi.clientHeight;
-                var pageOffset = window.pageYOffset + window.innerHeight;
-                if (pageOffset > lastLiOffset * 0.9) {
-                    handleScrollEvents = false;
-                    loadDown();
-                } else if (pageOffset < lastLiOffset * 0.1) {
-                    handleScrollEvents = false;
-                    loadUp();
+    const handleScroll = useCallback(() => {
+        const loadUp = () => {
+            setStartIndex(i => {
+                if (i >= PAGE_SIZE * PAGE_WINDOW_SHIFT) {
+                    return i - PAGE_SIZE * PAGE_WINDOW_SHIFT;
+                } else {
+                    document.addEventListener('scroll', handleScroll, true);
+                    return i;
                 }
-            }
-        },
-        [loadDown, loadUp]
-    );
+            });
+        };
+
+        const loadDown = () => {
+            setStartIndex(i => {
+                if (i + PAGE_SIZE < availableBooksRef.current.length) {
+                    return i + PAGE_SIZE * PAGE_WINDOW_SHIFT;
+                } else {
+                    document.addEventListener('scroll', handleScroll, true);
+                    return i;
+                }
+            });
+        };
+
+        document.removeEventListener('scroll', handleScroll, true);
+
+        var lastLi = document.querySelector('ul > li:last-child');
+        var lastLiOffset = lastLi.offsetTop + lastLi.clientHeight;
+        var pageOffset = window.pageYOffset + window.innerHeight;
+        if (pageOffset > lastLiOffset * (1 - PAGE_WINDOW_SHIFT)) {
+            loadDown();
+        } else if (pageOffset < lastLiOffset * PAGE_WINDOW_SHIFT) {
+            loadUp();
+        } else {
+            document.addEventListener('scroll', handleScroll, true);
+        }
+    }, [setStartIndex]);
 
     useEffect(() => {
         document.addEventListener('scroll', handleScroll, true);
@@ -77,36 +92,38 @@ function BooksList(props) {
 
     useEffect(() => {
         setVisibleBooks(() => {
-            handleScrollEvents = true;
             return availableBooks.slice(startIndex, startIndex + PAGE_SIZE);
         });
     }, [availableBooks, startIndex]);
 
+    useEffect(() => {
+        setLoading(false);
+        document.addEventListener('scroll', handleScroll, true);
+    }, [visibleBooks, handleScroll]);
+
     return (
         <>
             <Navbar
+                genreFilter={genreFilter}
+                genderFilter={genderFilter}
+                genres={['', ...props.genres]}
                 onOrderByBookName={() => {
-                    setStartIndex(i => 0);
-                    setAvailableBooks(a =>
-                        orderByBookName(a, {
-                            genreFilter,
-                            genderFilter
-                        })
+                    setLoadingState(
+                        l => true,
+                        () => {
+                            setStartIndex(i => 0);
+                            setAvailableBooks(a => sortByBookName(a));
+                        }
                     );
                 }}
                 onOrderByAuthorName={() => {
-                    setStartIndex(i => 0);
-                    setAvailableBooks(a =>
-                        orderByAuthorName(a, {
-                            genreFilter,
-                            genderFilter
-                        })
-                    );
+                    setLoadingState(true, () => {
+                        setStartIndex(i => 0);
+                        setAvailableBooks(a => sortByAuthorName(a));
+                    });
                 }}
-                genreFilter={genreFilter}
-                genderFilter={genderFilter}
-                genres={props.genres}
                 onGenderChange={event => {
+                    setLoading(true);
                     const genderFilter =
                         event.target.value === ALL ? null : event.target.value;
                     setGenderFilter(genderFilter);
@@ -119,6 +136,7 @@ function BooksList(props) {
                     );
                 }}
                 onGenreChange={event => {
+                    setLoading(true);
                     const genreFilter =
                         event.target.value === ALL ? null : event.target.value;
                     setGenreFilter(genreFilter);
@@ -131,6 +149,7 @@ function BooksList(props) {
                     );
                 }}
             ></Navbar>
+            {loading ? <Loader /> : null}
             <InfiniteList visibleBooks={visibleBooks} />
         </>
     );
