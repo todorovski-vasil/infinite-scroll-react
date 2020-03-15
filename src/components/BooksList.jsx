@@ -13,18 +13,36 @@ const ALL = 'all';
 const PAGE_SIZE = 1000;
 const PAGE_WINDOW_SHIFT = 0.1;
 
-const generateSetterWithCallback = reactSetter => {
+const generateSetterWithCallback = hookStateSetter => {
     return (loading, callback) => {
-        if (typeof loading == 'function') {
-            reactSetter(l => {
-                setTimeout(callback, 0);
-                return loading(l);
-            });
+        if (callback) {
+            if (typeof loading == 'function') {
+                hookStateSetter(l => {
+                    setTimeout(callback, 0);
+                    return loading(l);
+                });
+            } else {
+                hookStateSetter(() => {
+                    setTimeout(callback, 0);
+                    return loading;
+                });
+            }
         } else {
-            reactSetter(() => {
-                setTimeout(callback, 0);
-                return loading;
-            });
+            if (typeof loading == 'function') {
+                return new Promise(resolve => {
+                    hookStateSetter(l => {
+                        setTimeout(resolve, 0);
+                        return loading(l);
+                    });
+                });
+            } else {
+                return new Promise(resolve => {
+                    hookStateSetter(() => {
+                        setTimeout(resolve, 0);
+                        return loading;
+                    });
+                });
+            }
         }
     };
 };
@@ -47,6 +65,10 @@ function BooksList(props) {
     useEffect(() => {
         availableBooksRef.current = availableBooks;
     }, [availableBooks]);
+    // const loadingRef = useRef(loading);
+    // useEffect(() => {
+    //     loadingRef.current = loading;
+    // }, [loading]);
 
     const handleScroll = useCallback(() => {
         const loadUp = () => {
@@ -117,9 +139,15 @@ function BooksList(props) {
                     );
                 }}
                 onOrderByAuthorName={() => {
-                    setLoadingState(true, () => {
+                    // setLoadingState(true, () => {
+                    //     setStartIndex(i => 0);
+                    //     setAvailableBooks(a => sortByAuthorName(a));
+                    // });
+                    setLoadingState(true).then(() => {
+                        // if (loadingRef.current) {
                         setStartIndex(i => 0);
                         setAvailableBooks(a => sortByAuthorName(a));
+                        // }
                     });
                 }}
                 onGenderChange={event => {
