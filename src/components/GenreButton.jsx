@@ -2,20 +2,14 @@ import React from 'react';
 
 const ALL = 'all';
 
-function GenreButton(props) {
-    let genreLabel = 'all genres';
-    let defaultChecked = false;
-    let labelClasses = 'btn btn-secondary';
-    if (props.genre !== '') {
-        defaultChecked = true;
-        genreLabel = props.genre;
-    }
-    if (
-        props.genreFilter === props.genre ||
-        (!props.genreFilter && props.genre === '')
-    ) {
-        labelClasses += ' active';
-    }
+const GenreButton = React.memo(props => {
+    const genreLabel = props.genre ? props.genre : 'all genres';
+    const value = props.genre ? props.genre : ALL;
+    const defaultChecked = !props.genre;
+    const labelClasses = props.selected
+        ? 'btn btn-secondary active'
+        : 'btn btn-secondary';
+
     return (
         <label className={labelClasses}>
             <input
@@ -25,12 +19,12 @@ function GenreButton(props) {
                     e.stopPropagation();
                     props.onClick(e);
                 }}
-                value={props.genre !== '' ? props.genre : ALL}
+                value={value}
                 defaultChecked={defaultChecked}
             />
             {genreLabel}
         </label>
     );
-}
+});
 
 export default GenreButton;

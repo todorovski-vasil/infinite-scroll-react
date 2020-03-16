@@ -5,7 +5,7 @@ const ALL = 'all';
 const MALE = 'M',
     FEMALE = 'F';
 
-function Navbar(props) {
+const Navbar = props => {
     const allGendersLabel = 'all genders';
     const maleAuthorsLabel = 'male authors';
     const femaleAuthorsLabel = 'female authors';
@@ -46,17 +46,22 @@ function Navbar(props) {
                 className='btn-group btn-group-toggle ml-1 mr-1'
                 data-toggle='buttons'
             >
-                {props.genres.map(genre => (
-                    <GenreButton
-                        key={genre}
-                        genre={genre}
-                        genreFilter={props.genreFilter}
-                        onClick={e => {
-                            e.stopPropagation();
-                            props.onGenreChange(e);
-                        }}
-                    ></GenreButton>
-                ))}
+                {props.genres.map(genre => {
+                    const selected =
+                        genre === props.genreFilter ||
+                        (!props.genreFilter && genre === '');
+                    return (
+                        <GenreButton
+                            key={genre ? genre : 'allGenres'}
+                            genre={genre}
+                            selected={selected}
+                            onClick={e => {
+                                e.stopPropagation();
+                                props.onGenreChange(e);
+                            }}
+                        ></GenreButton>
+                    );
+                })}
             </div>
             <div
                 className='btn-group btn-group-toggle m-1'
@@ -101,6 +106,6 @@ function Navbar(props) {
             </div>
         </div>
     );
-}
+};
 
 export default Navbar;
