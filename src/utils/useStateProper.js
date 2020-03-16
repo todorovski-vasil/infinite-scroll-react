@@ -3,42 +3,44 @@ import React from 'react';
 function useStateProper(initialState) {
     const [stateProper, setStateProper] = React.useState(initialState);
 
-    const stateProperRef = React.useRef(stateProper);
-    React.useEffect(() => {
-        stateProperRef.current = stateProper;
-    }, [stateProper]);
-
-    const _setStateProper = (newStateProper, callback) => {
-        if (callback) {
-            if (typeof newStateProper == 'function') {
-                setStateProper(s => {
-                    setTimeout(callback, 0);
-                    return newStateProper(s);
-                });
-            } else {
-                setStateProper(() => {
-                    setTimeout(callback, 0);
-                    return newStateProper;
-                });
-            }
-        } else {
-            if (typeof newStateProper == 'function') {
-                return new Promise(resolve => {
+    const _setStateProper = React.useCallback(
+        (newStateProper, callback) => {
+            if (callback) {
+                // use a callback
+                if (typeof newStateProper == 'function') {
                     setStateProper(s => {
-                        setTimeout(resolve, 0, stateProperRef.current);
-                        return newStateProper(s);
+                        let newState = newStateProper(s);
+                        setTimeout(callback, 0, newState);
+                        return newState;
                     });
-                });
-            } else {
-                return new Promise(resolve => {
+                } else {
                     setStateProper(() => {
-                        setTimeout(resolve, 0, stateProperRef.current);
+                        setTimeout(callback, 0, newStateProper);
                         return newStateProper;
                     });
-                });
+                }
+            } else {
+                // return a promise
+                if (typeof newStateProper == 'function') {
+                    return new Promise(resolve => {
+                        setStateProper(s => {
+                            let newState = newStateProper(s);
+                            setTimeout(resolve, 0, newState);
+                            return newState;
+                        });
+                    });
+                } else {
+                    return new Promise(resolve => {
+                        setStateProper(() => {
+                            setTimeout(resolve, 0, newStateProper);
+                            return newStateProper;
+                        });
+                    });
+                }
             }
-        }
-    };
+        },
+        [setStateProper]
+    );
 
     return [stateProper, _setStateProper];
 }
