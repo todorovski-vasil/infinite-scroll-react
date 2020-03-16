@@ -1,14 +1,12 @@
 This application aims to provide a mock-up for the possible solutions, or part of the solutions that can be used to implement the list of one million books.
 
-The list is created in the constructor of the custom React component called "List", saved in the path "/src/components/List.jsx".
+The list is generated in the "./utils/generateBookstoreData.js" file, and the root Component in charge of displaying the data is in "./components/BooksList.jsx". The data transformation functions (sorting and filtering) are saved in the "./utils/booklistTransformations.js" together with their unit-tests. For the purposes of cleaner code conserning displaying of the loader screen, a custom hook is built and used ("./hooks/useStateProper.js").
 
 Because of performance limitations, only 1000 records are displayed at one time. Scrolling the page near the bottom or top of the page, moves the offset by 100 records up or down the full list. In that way we are able to traverse the whole list in a seamless way. The provided solution can easily be adjusted to retrieve the data from a web service which has the required fitering and sorting abilities.
 
 On the top of the component, we can find the buttons and radio button groups, which trigger the sorting and filtering of the list.
 
 The books from the "horror" genre which are published on Halloween are marked in orange, and the books from the "finance" genre which are published on the last friday of the month are marked in gray.
-
-
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

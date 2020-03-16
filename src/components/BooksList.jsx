@@ -1,14 +1,13 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     sortByBookName,
     sortByAuthorName,
     applyFilters
 } from '../utils/bookListTransformations';
-import Navbar from './Navbar';
-import { useEffect } from 'react';
+import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
 import Loader from './Loader/Loader';
-import { useStateProper } from '../utils/useStateProper';
+import { useStateProper } from '../hooks/useStateProper';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
