@@ -7,7 +7,7 @@ import {
 import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
 import Loader from './Loader/Loader';
-import { useStateProper } from '../hooks/useStateProper';
+// import { useStateProper } from '../hooks/useStateProper';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -28,6 +28,12 @@ function BooksList(props) {
     let [startIndex, setStartIndex] = useState(0);
     const [genreFilter, setGenreFilter] = useState(null);
     const [genderFilter, setGenderFilter] = useState(null);
+    const [scheduledSortByBookName, setScheduledSortByBookName] = useState(
+        false
+    );
+    const [scheduledSortByAuthorName, setScheduledSortByAuthorName] = useState(
+        false
+    );
     const [availableBooks, setAvailableBooks] = useState([...props.books]);
     const [visibleBooks, setVisibleBooks] = useState(
         props.books.filter(
@@ -35,7 +41,44 @@ function BooksList(props) {
                 index > startIndex && index < startIndex + PAGE_SIZE
         )
     );
-    const [loading, setLoading] = useStateProper(false);
+    // const [loading, setLoading] = useStateProper(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (scheduledSortByBookName) {
+            setTimeout(() => {
+                setAvailableBooks(a => sortByBookName(a));
+                setScheduledSortByBookName(false);
+            }, 0);
+        }
+    }, [scheduledSortByBookName]);
+
+    useEffect(() => {
+        if (scheduledSortByAuthorName) {
+            setTimeout(() => {
+                setAvailableBooks(a => sortByAuthorName(a));
+                setScheduledSortByAuthorName(false);
+            }, 0);
+        }
+    }, [scheduledSortByAuthorName]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setAvailableBooks(
+                applyFilters(props.books, {
+                    genreFilter,
+                    genderFilter
+                })
+            );
+            setLoading(false);
+        }, 0);
+    }, [genreFilter, genderFilter, props.books]);
+
+    useEffect(() => {
+        setVisibleBooks(() => {
+            return availableBooks.slice(startIndex, startIndex + PAGE_SIZE);
+        });
+    }, [availableBooks, startIndex]);
 
     const availableBooksRef = useRef(availableBooks);
     useEffect(() => {
@@ -85,15 +128,9 @@ function BooksList(props) {
     }, [handleScroll]);
 
     useEffect(() => {
-        setVisibleBooks(() => {
-            return availableBooks.slice(startIndex, startIndex + PAGE_SIZE);
-        });
-    }, [availableBooks, startIndex]);
-
-    useEffect(() => {
         setLoading(false);
         document.addEventListener('scroll', handleScroll, true);
-    }, [visibleBooks, handleScroll, setLoading]);
+    }, [visibleBooks, handleScroll]);
 
     return (
         <>
@@ -103,53 +140,28 @@ function BooksList(props) {
                 genderFilter={genderFilter}
                 genres={['', ...props.genres]}
                 onOrderByBookName={() => {
-                    setLoading(true, ld => {
-                        setStartIndex(i => 0);
-                        setAvailableBooks(a => sortByBookName(a));
-                        setLoading(!ld);
-                    });
+                    setLoading(true);
+                    setScheduledSortByBookName(true);
+                    setStartIndex(0);
                 }}
                 onOrderByAuthorName={() => {
-                    setLoading(l => true).then(ld => {
-                        setStartIndex(i => 0);
-                        setAvailableBooks(a => sortByAuthorName(a));
-                        setLoading(!ld);
-                    });
+                    setLoading(true);
+                    setScheduledSortByAuthorName(true);
+                    setStartIndex(i => 0);
                 }}
                 onGenderChange={event => {
-                    const selectedGender = event.target.value;
-                    setLoading(true).then(ld => {
-                        const genderFilter =
-                            selectedGender === ALL ? null : selectedGender;
-                        setGenderFilter(genderFilter);
-                        setStartIndex(i => 0);
-                        setAvailableBooks(
-                            applyFilters(props.books, {
-                                genreFilter,
-                                genderFilter
-                            })
-                        );
-                        setLoading(!ld);
-                    });
+                    setLoading(true);
+                    setGenderFilter(
+                        event.target.value === ALL ? null : event.target.value
+                    );
+                    setStartIndex(0);
                 }}
                 onGenreChange={event => {
-                    const selectedGenre = event.target.value;
-                    setLoading(
-                        l => true,
-                        ld => {
-                            const genreFilter =
-                                selectedGenre === ALL ? null : selectedGenre;
-                            setGenreFilter(genreFilter);
-                            setStartIndex(i => 0);
-                            setAvailableBooks(
-                                applyFilters(props.books, {
-                                    genreFilter,
-                                    genderFilter
-                                })
-                            );
-                            setLoading(!ld);
-                        }
+                    setLoading(true);
+                    setGenreFilter(
+                        event.target.value === ALL ? null : event.target.value
                     );
+                    setStartIndex(0);
                 }}
             ></Navbar>
             <InfiniteList visibleBooks={visibleBooks} />
