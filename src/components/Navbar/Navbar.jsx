@@ -6,7 +6,7 @@ const MALE = 'M',
     FEMALE = 'F';
 
 const Navbar = props => {
-    const allGendersLabel = 'all genders';
+    const allGendersLabel = 'all authors';
     const maleAuthorsLabel = 'male authors';
     const femaleAuthorsLabel = 'female authors';
 

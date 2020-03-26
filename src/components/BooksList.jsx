@@ -13,6 +13,17 @@ const ALL = 'all';
 const PAGE_SIZE = 1000;
 const PAGE_WINDOW_SHIFT = 0.1;
 
+const indexedDBAvailable = window.indexedDB ? true : false;
+if (indexedDBAvailable) {
+    console.log(
+        'Your browser supports a stable version of IndexedDB. High performance operation will be available.'
+    );
+} else {
+    console.log(
+        "Your browser doesn't support a stable version of IndexedDB. High performance operation will not be available."
+    );
+}
+
 function BooksList(props) {
     let [startIndex, setStartIndex] = useState(0);
     const [genreFilter, setGenreFilter] = useState(null);
