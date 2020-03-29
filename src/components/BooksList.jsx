@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     sortByBookName,
     sortByAuthorName,
@@ -7,7 +7,6 @@ import {
 import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
 import Loader from './Loader/Loader';
-// import { useStateProper } from '../hooks/useStateProper';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -41,7 +40,6 @@ function BooksList(props) {
                 index > startIndex && index < startIndex + PAGE_SIZE
         )
     );
-    // const [loading, setLoading] = useStateProper(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -80,60 +78,30 @@ function BooksList(props) {
         });
     }, [availableBooks, startIndex]);
 
-    const availableBooksRef = useRef(availableBooks);
-    useEffect(() => {
-        availableBooksRef.current = availableBooks;
-    }, [availableBooks]);
-
-    const handleScroll = useCallback(() => {
-        const loadUp = () => {
-            setStartIndex(i => {
-                if (i >= PAGE_SIZE * PAGE_WINDOW_SHIFT) {
-                    return i - PAGE_SIZE * PAGE_WINDOW_SHIFT;
-                } else {
-                    document.addEventListener('scroll', handleScroll, true);
-                    return i;
-                }
-            });
-        };
-
-        const loadDown = () => {
-            setStartIndex(i => {
-                if (i + PAGE_SIZE < availableBooksRef.current.length) {
-                    return i + PAGE_SIZE * PAGE_WINDOW_SHIFT;
-                } else {
-                    document.addEventListener('scroll', handleScroll, true);
-                    return i;
-                }
-            });
-        };
-
-        document.removeEventListener('scroll', handleScroll, true);
-
-        var lastLi = document.querySelector('ul > li:last-child');
-        var lastLiOffset = lastLi.offsetTop + lastLi.clientHeight;
-        var pageOffset = window.pageYOffset + window.innerHeight;
-        if (pageOffset > lastLiOffset * (1 - PAGE_WINDOW_SHIFT)) {
-            loadDown();
-        } else if (pageOffset < lastLiOffset * PAGE_WINDOW_SHIFT) {
-            loadUp();
-        } else {
-            document.addEventListener('scroll', handleScroll, true);
-        }
-    }, [setStartIndex]);
-
-    useEffect(() => {
-        document.addEventListener('scroll', handleScroll, true);
-        return () => document.removeEventListener('scroll', handleScroll, true);
-    }, [handleScroll]);
-
     useEffect(() => {
         setLoading(false);
-        document.addEventListener('scroll', handleScroll, true);
-    }, [visibleBooks, handleScroll]);
+    }, [visibleBooks]);
+
+    const handleScroll = event => {
+        const { scrollTop, scrollHeight } = event.nativeEvent.target;
+
+        if (
+            scrollTop > scrollHeight * (1 - PAGE_WINDOW_SHIFT) &&
+            startIndex + PAGE_SIZE < availableBooks.length
+        ) {
+            // scroll down
+            setStartIndex(i => i + PAGE_SIZE * PAGE_WINDOW_SHIFT);
+        } else if (
+            scrollTop < scrollHeight * PAGE_WINDOW_SHIFT &&
+            startIndex >= PAGE_SIZE * PAGE_WINDOW_SHIFT
+        ) {
+            // scroll up
+            setStartIndex(i => i - PAGE_SIZE * PAGE_WINDOW_SHIFT);
+        }
+    };
 
     return (
-        <>
+        <div style={{ height: '100vh' }}>
             {loading ? <Loader /> : null}
             <Navbar
                 genreFilter={genreFilter}
@@ -147,7 +115,7 @@ function BooksList(props) {
                 onOrderByAuthorName={() => {
                     setLoading(true);
                     setScheduledSortByAuthorName(true);
-                    setStartIndex(i => 0);
+                    setStartIndex(0);
                 }}
                 onGenderChange={event => {
                     setLoading(true);
@@ -164,8 +132,8 @@ function BooksList(props) {
                     setStartIndex(0);
                 }}
             ></Navbar>
-            <InfiniteList visibleBooks={visibleBooks} />
-        </>
+            <InfiniteList visibleBooks={visibleBooks} onScroll={handleScroll} />
+        </div>
     );
 }
 
