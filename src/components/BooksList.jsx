@@ -101,7 +101,7 @@ function BooksList(props) {
     };
 
     return (
-        <div style={{ height: '100vh' }}>
+        <div>
             {loading ? <Loader /> : null}
             <Navbar
                 genreFilter={genreFilter}

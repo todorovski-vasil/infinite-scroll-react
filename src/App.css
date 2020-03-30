@@ -25,7 +25,7 @@
     z-index: 100;
 }
 
-@media (max-width: 1195px) {
+@media (max-width: 1174px) {
     .bookListNavbar {
         height: 5.8rem;
     }
@@ -34,7 +34,7 @@
         height: calc(100vh - 5.8rem);
     }
 
-    @media (max-width: 832px) {
+    @media (max-width: 812px) {
         .bookListNavbar {
             height: 8.1rem;
         }
