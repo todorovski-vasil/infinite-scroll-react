@@ -35,8 +35,8 @@ const getLabel = book =>
 
 function InfiniteList(props) {
     return (
-        <div className='container infiniteList' onScroll={props.onScroll}>
-            <ul className='list-group'>
+        <div className='infiniteList' onScroll={props.onScroll}>
+            <ul className='container list-group'>
                 {props.visibleBooks.map(book => {
                     return (
                         <li key={book.isbn} className={getCSSClasses(book)}>
