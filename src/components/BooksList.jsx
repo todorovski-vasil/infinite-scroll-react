@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     sortByBookName,
     sortByAuthorName,
@@ -82,23 +82,28 @@ function BooksList(props) {
         setLoading(false);
     }, [visibleBooks]);
 
-    const handleScroll = event => {
-        const { scrollTop, scrollHeight } = event.nativeEvent.target;
-
-        if (
-            scrollTop > scrollHeight * (1 - PAGE_WINDOW_SHIFT) &&
-            startIndex + PAGE_SIZE < availableBooks.length
-        ) {
-            // scroll down
-            setStartIndex(i => i + PAGE_SIZE * PAGE_WINDOW_SHIFT);
-        } else if (
-            scrollTop < scrollHeight * PAGE_WINDOW_SHIFT &&
-            startIndex >= PAGE_SIZE * PAGE_WINDOW_SHIFT
-        ) {
-            // scroll up
-            setStartIndex(i => i - PAGE_SIZE * PAGE_WINDOW_SHIFT);
-        }
-    };
+    const handleScroll = useCallback(
+        direction => {
+            switch (direction) {
+                case 'down':
+                    if (startIndex + PAGE_SIZE < availableBooks.length) {
+                        setStartIndex(i => i + PAGE_SIZE * PAGE_WINDOW_SHIFT);
+                    }
+                    break;
+                case 'up':
+                    if (startIndex >= PAGE_SIZE * PAGE_WINDOW_SHIFT) {
+                        setStartIndex(i => i - PAGE_SIZE * PAGE_WINDOW_SHIFT);
+                    }
+                    break;
+                default:
+                    console.error(
+                        'unsuported scroll direction received in Booklist.jsx handleScroll handler: ' +
+                            direction
+                    );
+            }
+        },
+        [startIndex, availableBooks]
+    );
 
     return (
         <div>
@@ -132,7 +137,11 @@ function BooksList(props) {
                     setStartIndex(0);
                 }}
             ></Navbar>
-            <InfiniteList visibleBooks={visibleBooks} onScroll={handleScroll} />
+            <InfiniteList
+                visibleBooks={visibleBooks}
+                handleScroll={handleScroll}
+                scrollTriggerRatio={PAGE_WINDOW_SHIFT}
+            />
         </div>
     );
 }

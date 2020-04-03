@@ -34,8 +34,20 @@ const getLabel = book =>
     book.publishedDate.toDateString();
 
 function InfiniteList(props) {
+    const onScroll = event => {
+        event.preventDefault();
+
+        const { scrollTop, scrollHeight } = event.nativeEvent.target;
+
+        if (scrollTop > scrollHeight * (1 - props.scrollTriggerRatio)) {
+            props.handleScroll('down');
+        } else if (scrollTop < scrollHeight * props.scrollTriggerRatio) {
+            props.handleScroll('up');
+        }
+    };
+
     return (
-        <div className='infiniteList' onScroll={props.onScroll}>
+        <div className='infiniteList' onScroll={onScroll}>
             <ul className='container list-group'>
                 {props.visibleBooks.map(book => {
                     return (
