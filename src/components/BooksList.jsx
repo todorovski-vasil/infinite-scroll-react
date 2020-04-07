@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { connect } from 'react-redux';
+
 import {
     sortByBookName,
     sortByAuthorName,
@@ -7,6 +9,7 @@ import {
 import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
 import Loader from './Loader/Loader';
+import * as actions from '../store/actions/books';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -113,27 +116,31 @@ function BooksList(props) {
                 genderFilter={genderFilter}
                 genres={['', ...props.genres]}
                 onOrderByBookName={() => {
+                    props.setOrderByName(true);
                     setLoading(true);
                     setScheduledSortByBookName(true);
                     setStartIndex(0);
                 }}
                 onOrderByAuthorName={() => {
+                    props.setOrderByAuthorName(true);
                     setLoading(true);
                     setScheduledSortByAuthorName(true);
                     setStartIndex(0);
                 }}
                 onGenderChange={event => {
+                    const filter =
+                        event.target.value === ALL ? null : event.target.value;
+                    props.setAuthorGenderFilter(filter);
                     setLoading(true);
-                    setGenderFilter(
-                        event.target.value === ALL ? null : event.target.value
-                    );
+                    setGenderFilter(filter);
                     setStartIndex(0);
                 }}
                 onGenreChange={event => {
+                    const filter =
+                        event.target.value === ALL ? null : event.target.value;
+                    props.setGenreFilter(filter);
                     setLoading(true);
-                    setGenreFilter(
-                        event.target.value === ALL ? null : event.target.value
-                    );
+                    setGenreFilter(filter);
                     setStartIndex(0);
                 }}
             ></Navbar>
@@ -146,4 +153,22 @@ function BooksList(props) {
     );
 }
 
-export default BooksList;
+const mapStateToProps = state => {
+    return {
+        genreFilter: state.genreFilter,
+        authorGenderFilter: state.authorGenderFilter
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setOrderByName: order => dispatch(actions.setOrderByName(order)),
+        setOrderByAuthorName: order =>
+            dispatch(actions.setOrderByAuthorName(order)),
+        setGenreFilter: filter => dispatch(actions.setGenreFilter(filter)),
+        setAuthorGenderFilter: filter =>
+            dispatch(actions.setAuthorGenderFilter(filter))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BooksList);
