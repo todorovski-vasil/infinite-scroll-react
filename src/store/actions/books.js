@@ -1,29 +1,43 @@
-import * as actions from './actionTypes';
+import * as actionTypes from './actionTypes';
 
 export const setOrderByName = order => {
     return {
-        type: actions.SET_ORDER_BY_BOOK_NAME,
+        type: actionTypes.SET_ORDER_BY_BOOK_NAME,
         order: order
     };
 };
 
 export const setOrderByAuthorName = order => {
     return {
-        type: actions.SET_ORDER_BY_AUTHOR_NAME,
+        type: actionTypes.SET_ORDER_BY_AUTHOR_NAME,
         order: order
     };
 };
 
 export const setGenreFilter = filter => {
     return {
-        type: actions.SET_GENRE_FILTER,
+        type: actionTypes.SET_GENRE_FILTER,
         filter: filter
     };
 };
 
 export const setAuthorGenderFilter = filter => {
     return {
-        type: actions.SET_AUTHOR_GENDER_FILTER,
+        type: actionTypes.SET_AUTHOR_GENDER_FILTER,
         filter: filter
+    };
+};
+
+export const setAvailableBooks = books => {
+    return {
+        type: actionTypes.SET_AVAILABLE_BOOKS,
+        avBooks: books
+    };
+};
+
+export const setBooks = books => {
+    return {
+        type: actionTypes.SET_BOOKS,
+        books: books
     };
 };

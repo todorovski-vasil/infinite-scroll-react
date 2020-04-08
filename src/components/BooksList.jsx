@@ -85,6 +85,10 @@ function BooksList(props) {
         setLoading(false);
     }, [visibleBooks]);
 
+    useEffect(() => {
+        props.setBooks(props.books);
+    }, [props.books, props.setBooks]);
+
     const handleScroll = useCallback(
         direction => {
             switch (direction) {
@@ -162,6 +166,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        setBooks: books => dispatch(actions.setBooks(books)),
         setOrderByName: order => dispatch(actions.setOrderByName(order)),
         setOrderByAuthorName: order =>
             dispatch(actions.setOrderByAuthorName(order)),
