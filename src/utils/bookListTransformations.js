@@ -1,17 +1,39 @@
-const sortByBookName = books =>
+const sortByBookName = (books) =>
     [...books].sort((a, b) => (a.name > b.name ? 1 : -1));
 
-const sortByAuthorName = books =>
+const sortByBookNameAsync = (books) =>
+    new Promise((resolve) => {
+        setTimeout(
+            () =>
+                resolve([...books].sort((a, b) => (a.name > b.name ? 1 : -1))),
+            0
+        );
+    });
+
+const sortByAuthorName = (books) =>
     [...books].sort((a, b) => (a.author.name > b.author.name ? 1 : -1));
+
+const sortByAuthorNameAsync = (books) =>
+    new Promise((resolve) => {
+        setTimeout(
+            () =>
+                resolve(
+                    [...books].sort((a, b) =>
+                        a.author.name > b.author.name ? 1 : -1
+                    )
+                ),
+            0
+        );
+    });
 
 const filterByGender = (books, genderFilter) =>
     genderFilter !== null
-        ? books.filter(book => book.author.gender === genderFilter)
+        ? books.filter((book) => book.author.gender === genderFilter)
         : [...books];
 
 const filterByGenre = (books, genreFilter) =>
     genreFilter !== null
-        ? books.filter(book => book.genre === genreFilter)
+        ? books.filter((book) => book.genre === genreFilter)
         : [...books];
 
 const applyFilters = (books, { genreFilter, genderFilter }) =>
@@ -25,10 +47,12 @@ const orderByAuthorName = (books, { genreFilter, genderFilter }) =>
 
 export {
     sortByBookName,
+    sortByBookNameAsync,
     sortByAuthorName,
+    sortByAuthorNameAsync,
     filterByGender,
     filterByGenre,
     applyFilters,
     orderByBookName,
-    orderByAuthorName
+    orderByAuthorName,
 };

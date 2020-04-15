@@ -1,37 +1,45 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import createSagaMiddleware from 'redux-saga';
+import React, { useState, useEffect } from 'react';
 
 import './App.css';
 
 // import List from './components/List';
 import BooksList from './components/BooksList';
 import { getBookstore } from './utils/generateBookstoreData';
-import { booksReducer } from './store/reducers/books';
-import { rootSaga } from './store/sagas/booksSaga';
+import Loader from './components/Loader/Loader';
+import { useDispatch } from 'react-redux';
+import { SET_BOOKS } from './store/actions/actionTypes';
 
 // console.log({ createSagaMiddleware });
 
-const sagaMiddleware = createSagaMiddleware();
-const store = createStore(
-    booksReducer,
-    composeWithDevTools(applyMiddleware(sagaMiddleware))
-);
-sagaMiddleware.run(rootSaga);
-
 function App() {
-    const bookstoreData = getBookstore();
+    const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const bookstoreData = getBookstore();
+        dispatch({
+            type: SET_BOOKS,
+            data: {
+                books: bookstoreData.books,
+                genres: bookstoreData.genres,
+            },
+        });
+        setIsLoading(false);
+    }, [dispatch]);
+
     return (
-        <Provider store={store}>
+        <>
             {/* <List /> */}
-            <BooksList
-                authors={bookstoreData.authors}
-                books={bookstoreData.books}
-                genres={bookstoreData.genres}
-            ></BooksList>
-        </Provider>
+            {isLoading ? (
+                <Loader />
+            ) : (
+                <BooksList
+                // authors={bookstoreData.authors}
+                // books={bookstoreData.books}
+                // genres={bookstoreData.genres}
+                ></BooksList>
+            )}
+        </>
     );
 }
 

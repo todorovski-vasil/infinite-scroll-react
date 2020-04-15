@@ -1,11 +1,13 @@
 import {
     sortByBookName,
+    sortByBookNameAsync,
     sortByAuthorName,
+    sortByAuthorNameAsync,
     filterByGender,
     filterByGenre,
     applyFilters,
     orderByBookName,
-    orderByAuthorName
+    orderByAuthorName,
 } from './bookListTransformations';
 
 test('sortByBookName sorts correctly', () => {
@@ -17,7 +19,7 @@ test('sortByBookName sorts correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -26,12 +28,42 @@ test('sortByBookName sorts correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
     const sortedTestBooks = sortByBookName(testBooks);
     expect(sortedTestBooks.length).toBe(testBooks.length);
     expect(sortedTestBooks[0].isbn).toBe(testBooks[1].isbn);
+});
+
+test('sortByBookNameAsync sorts correctly', () => {
+    const testBooks = [
+        {
+            isbn: '1000000-4265253843.5273874',
+            name: 'Book about 758728',
+            author: { name: 'Author 4744000', gender: 'F' },
+            genre: 'drama',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+        {
+            isbn: '1000000-4265253843.526669',
+            name: 'Book about 728000',
+            author: { name: 'Author 4744000', gender: 'F' },
+            genre: 'drama',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+    ];
+
+    expect.assertions(2);
+    return sortByBookNameAsync(testBooks).then((sortedTestBooks) => {
+        // console.table(sortedTestBooks);
+        expect(sortedTestBooks.length).toBe(testBooks.length);
+        expect(sortedTestBooks[0].isbn).toBe(testBooks[1].isbn);
+    });
 });
 
 test('sortByAuthorName sorts correctly', () => {
@@ -43,7 +75,7 @@ test('sortByAuthorName sorts correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -52,12 +84,42 @@ test('sortByAuthorName sorts correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
     const sortedTestBooks = sortByAuthorName(testBooks);
     expect(sortedTestBooks.length).toBe(testBooks.length);
     expect(sortedTestBooks[0].isbn).toBe(testBooks[1].isbn);
+});
+
+test('sortByAuthorNameAsync sorts correctly', () => {
+    const testBooks = [
+        {
+            isbn: '1000000-4265253843.5273874',
+            name: 'Book about 758728',
+            author: { name: 'Author 4744000', gender: 'F' },
+            genre: 'drama',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+        {
+            isbn: '1000000-4265253843.526669',
+            name: 'Book about 123000',
+            author: { name: 'Author 4744000', gender: 'F' },
+            genre: 'drama',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+    ];
+
+    expect.assertions(2);
+    return sortByAuthorNameAsync(testBooks).then((sortedTestBooks) => {
+        // console.table(sortedTestBooks);
+        expect(sortedTestBooks.length).toBe(testBooks.length);
+        expect(sortedTestBooks[0].isbn).toBe(testBooks[1].isbn);
+    });
 });
 
 test('filterByGender filters correctly', () => {
@@ -69,7 +131,7 @@ test('filterByGender filters correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -78,8 +140,8 @@ test('filterByGender filters correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
     const filteredTestBooksByMaleAuthor = filterByGender(testBooks, 'M');
     expect(filteredTestBooksByMaleAuthor.length).toBe(1);
@@ -106,7 +168,7 @@ test('filterByGenre filters correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -115,8 +177,8 @@ test('filterByGenre filters correctly', () => {
             genre: 'finance',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
     const financeTestBooks = filterByGenre(testBooks, 'finance');
     expect(financeTestBooks.length).toBe(1);
@@ -143,7 +205,7 @@ test('ordering by book name works correctly', () => {
             genre: 'finance',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -152,7 +214,7 @@ test('ordering by book name works correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.525467',
@@ -161,7 +223,7 @@ test('ordering by book name works correctly', () => {
             genre: 'poetry',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.521234',
@@ -170,34 +232,34 @@ test('ordering by book name works correctly', () => {
             genre: 'poetry',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
 
     const orderedBookstoreByMaleAuthors = orderByBookName(testBooks, {
         genreFilter: null,
-        genderFilter: 'M'
+        genderFilter: 'M',
     });
     expect(orderedBookstoreByMaleAuthors.length).toBe(3);
     expect(orderedBookstoreByMaleAuthors[0].isbn).toBe(testBooks[1].isbn);
 
     const orderedFinanceBookstore = orderByBookName(testBooks, {
         genreFilter: 'finance',
-        genderFilter: null
+        genderFilter: null,
     });
     expect(orderedFinanceBookstore.length).toBe(1);
     expect(orderedFinanceBookstore[0].isbn).toBe(testBooks[0].isbn);
 
     const orderedPoetryByMaleBookstore = orderByBookName(testBooks, {
         genreFilter: 'poetry',
-        genderFilter: 'M'
+        genderFilter: 'M',
     });
     expect(orderedPoetryByMaleBookstore.length).toBe(2);
     expect(orderedPoetryByMaleBookstore[0].isbn).toBe(testBooks[2].isbn);
 
     const orderedBookstore = orderByBookName(testBooks, {
         genreFilter: null,
-        genderFilter: null
+        genderFilter: null,
     });
     expect(orderedBookstore.length).toBe(testBooks.length);
     expect(orderedBookstore[0].isbn).toBe(testBooks[1].isbn);
@@ -212,7 +274,7 @@ test('ordering by author name works correctly', () => {
             genre: 'finance',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -221,27 +283,27 @@ test('ordering by author name works correctly', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
 
     const orderedBookstoreByMaleAuthors = orderByAuthorName(testBooks, {
         genreFilter: null,
-        genderFilter: 'M'
+        genderFilter: 'M',
     });
     expect(orderedBookstoreByMaleAuthors.length).toBe(1);
     expect(orderedBookstoreByMaleAuthors[0].isbn).toBe(testBooks[1].isbn);
 
     const orderedFinanceBookstore = orderByAuthorName(testBooks, {
         genreFilter: 'finance',
-        genderFilter: null
+        genderFilter: null,
     });
     expect(orderedFinanceBookstore.length).toBe(1);
     expect(orderedFinanceBookstore[0].isbn).toBe(testBooks[0].isbn);
 
     const orderedBookstore = orderByAuthorName(testBooks, {
         genreFilter: null,
-        genderFilter: null
+        genderFilter: null,
     });
     expect(orderedBookstore.length).toBe(testBooks.length);
     expect(orderedBookstore[0].isbn).toBe(testBooks[1].isbn);
@@ -256,7 +318,7 @@ test('applyFilters works correctly when filtering by author gender', () => {
             genre: 'finance',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
+            ),
         },
         {
             isbn: '1000000-4265253843.526669',
@@ -265,33 +327,33 @@ test('applyFilters works correctly when filtering by author gender', () => {
             genre: 'drama',
             publishedDate: new Date(
                 'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
-            )
-        }
+            ),
+        },
     ];
 
     const bookstoreByMaleAuthors = applyFilters(testBooks, {
         genreFilter: null,
-        genderFilter: 'M'
+        genderFilter: 'M',
     });
     expect(bookstoreByMaleAuthors.length).toBe(1);
     expect(bookstoreByMaleAuthors[0].isbn).toBe(testBooks[1].isbn);
 
     const bookstoreByFemaleAuthors = applyFilters(testBooks, {
         genreFilter: null,
-        genderFilter: 'F'
+        genderFilter: 'F',
     });
     expect(bookstoreByFemaleAuthors.length).toBe(1);
     expect(bookstoreByFemaleAuthors[0].isbn).toBe(testBooks[0].isbn);
 
     const bookstoreTAuthors = applyFilters(testBooks, {
         genreFilter: null,
-        genderFilter: 'T'
+        genderFilter: 'T',
     });
     expect(bookstoreTAuthors.length).toBe(0);
 
     const bookstoreAllAuthors = applyFilters(testBooks, {
         genreFilter: null,
-        genderFilter: null
+        genderFilter: null,
     });
     expect(bookstoreAllAuthors.length).toBe(2);
     expect(bookstoreAllAuthors[0].isbn).toBe(testBooks[0].isbn);
