@@ -6,6 +6,7 @@ import {
     filterByGender,
     filterByGenre,
     applyFilters,
+    applyFiltersAsync,
     orderByBookName,
     orderByAuthorName,
 } from './bookListTransformations';
@@ -358,4 +359,71 @@ test('applyFilters works correctly when filtering by author gender', () => {
     expect(bookstoreAllAuthors.length).toBe(2);
     expect(bookstoreAllAuthors[0].isbn).toBe(testBooks[0].isbn);
     expect(bookstoreAllAuthors[1].isbn).toBe(testBooks[1].isbn);
+});
+
+test('applyFiltersAsync works correctly when filtering by genre drama', () => {
+    const testBooks = [
+        {
+            isbn: '1000000-4265253843.5273874',
+            name: 'Book about 758728',
+            author: { name: 'Author 4744000', gender: 'F' },
+            genre: 'finance',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+        {
+            isbn: '1000000-4265253843.526669',
+            name: 'Book about 728000',
+            author: { name: 'Author 1213142', gender: 'M' },
+            genre: 'drama',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+    ];
+
+    expect.assertions(2);
+
+    return applyFiltersAsync(testBooks, {
+        genreFilter: 'drama',
+        authorGenderFilter: null,
+    }).then((bookstoreDrama) => {
+        expect(bookstoreDrama.length).toBe(1);
+        expect(bookstoreDrama[0].isbn).toBe(testBooks[1].isbn);
+    });
+});
+
+test('applyFiltersAsync works correctly when filtering by nothing', () => {
+    const testBooks = [
+        {
+            isbn: '1000000-4265253843.5273874',
+            name: 'Book about 758728',
+            author: { name: 'Author 4744000', gender: 'F' },
+            genre: 'finance',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+        {
+            isbn: '1000000-4265253843.526669',
+            name: 'Book about 728000',
+            author: { name: 'Author 1213142', gender: 'M' },
+            genre: 'drama',
+            publishedDate: new Date(
+                'Wed Sep 17 1738 00:00:00 GMT+0122 (Central European Summer Time)'
+            ),
+        },
+    ];
+
+    expect.assertions(3);
+
+    return applyFiltersAsync(testBooks, {
+        genreFilter: null,
+        authorGenderFilter: null,
+    }).then((bookstore) => {
+        expect(bookstore.length).toBe(2);
+        expect(bookstore[0].isbn).toBe(testBooks[0].isbn);
+        expect(bookstore[1].isbn).toBe(testBooks[1].isbn);
+    });
 });

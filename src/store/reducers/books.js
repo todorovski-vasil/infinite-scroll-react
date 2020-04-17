@@ -1,8 +1,6 @@
 import * as actionTypes from '../actions/actionTypes';
-// import * as booksActions from '../actions/books';
 
 const PAGE_SIZE = 1000;
-// const PAGE_WINDOW_SHIFT = 0.1;
 
 const initialState = {
     books: [],
@@ -14,24 +12,16 @@ const initialState = {
     orderByBookName: false,
     orderByAuthorName: false,
     genreFilter: null,
-    actorGenderFiler: null,
+    authorGenderFilter: null,
     isLoading: true,
 };
 
-// const setOrderByBookName = (state, order) => {
-//     return getNextState(state, { orderByBookName: order });
-// };
-
-// const setOrderByAuthorName = (state, order) => {
-//     return { ...state, orderByAuthorName: order };
-// };
-
-const setGenreFilter = (state, filter) => {
+const saveGenreFilter = (state, filter) => {
     return { ...state, genreFilter: filter };
 };
 
-const setAuthorGenderFilter = (state, filter) => {
-    return { ...state, actorGenderFiler: filter };
+const saveAuthorGenderFilter = (state, filter) => {
+    return { ...state, authorGenderFilter: filter };
 };
 
 const setAvailableBooks = (state, books) => {
@@ -44,10 +34,6 @@ const setAvailableBooks = (state, books) => {
         ),
     };
 };
-
-// const setLoading = (state, loading) => {
-//     return getNextState(state, { isLoading: loading });
-// };
 
 const setBooks = (state, data) => {
     const startIndex = 0;
@@ -69,23 +55,25 @@ const setBooks = (state, data) => {
 
 export const booksReducer = (state = initialState, action) => {
     switch (action.type) {
-        // case actionTypes.SET_ORDER_BY_BOOK_NAME:
-        //     return setOrderByBookName(state, action.order);
-        // case actionTypes.SET_ORDER_BY_AUTHOR_NAME:
-        //     return setOrderByAuthorName(state, action.order);
-        case actionTypes.SET_GENRE_FILTER:
-            return setGenreFilter(state, action.filter);
-        case actionTypes.SET_AUTHOR_GENDER_FILTER:
-            return setAuthorGenderFilter(state, action.filter);
+        case actionTypes.SAVE_GENRE_FILTER:
+            return saveGenreFilter(state, action.filter);
+        case actionTypes.SAVE_AUTHOR_GENDER_FILTER:
+            return saveAuthorGenderFilter(state, action.filter);
         case actionTypes.SET_AVAILABLE_BOOKS:
             return setAvailableBooks(state, action.avBooks);
         case actionTypes.SET_BOOKS:
             return setBooks(state, action.data);
         case actionTypes.SET_LOADING:
             return { ...state, isLoading: action.loading };
-        // return { ...state, books: action.books };
-        // case actionTypes.SCROLL_POSITION_CHANGE:
-        //     return moveSlidingWindow;
+        case actionTypes.SET_START_INDEX:
+            return {
+                ...state,
+                startIndex: action.index,
+                visibleBooks: state.availableBooks.slice(
+                    action.index,
+                    action.index + PAGE_SIZE
+                ),
+            };
         default:
             return state;
     }

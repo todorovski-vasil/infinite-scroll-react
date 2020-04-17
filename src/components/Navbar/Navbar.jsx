@@ -5,7 +5,7 @@ const ALL = 'all';
 const MALE = 'M',
     FEMALE = 'F';
 
-const Navbar = props => {
+const Navbar = (props) => {
     const allGendersLabel = 'all authors';
     const maleAuthorsLabel = 'male authors';
     const femaleAuthorsLabel = 'female authors';
@@ -25,7 +25,7 @@ const Navbar = props => {
     return (
         <div className='bookListNavbar'>
             <button
-                onClick={e => {
+                onClick={(e) => {
                     e.stopPropagation();
                     props.onOrderByBookName(e);
                 }}
@@ -34,7 +34,7 @@ const Navbar = props => {
                 order by book name
             </button>
             <button
-                onClick={e => {
+                onClick={(e) => {
                     e.stopPropagation();
                     props.onOrderByAuthorName(e);
                 }}
@@ -46,7 +46,7 @@ const Navbar = props => {
                 className='btn-group btn-group-toggle ml-1 mr-1'
                 data-toggle='buttons'
             >
-                {props.genres.map(genre => {
+                {props.genres.map((genre) => {
                     const selected =
                         genre === props.genreFilter ||
                         (!props.genreFilter && genre === '');
@@ -55,7 +55,7 @@ const Navbar = props => {
                             key={genre ? genre : 'allGenres'}
                             genre={genre}
                             selected={selected}
-                            onClick={e => {
+                            onClick={(e) => {
                                 e.stopPropagation();
                                 props.onGenreChange(e);
                             }}
@@ -71,9 +71,9 @@ const Navbar = props => {
                     <input
                         type='radio'
                         name='gender'
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
-                            props.onGenderChange(e);
+                            props.onAuthorGenderChange(e);
                         }}
                         value={ALL}
                     />
@@ -83,9 +83,9 @@ const Navbar = props => {
                     <input
                         type='radio'
                         name='gender'
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
-                            props.onGenderChange(e);
+                            props.onAuthorGenderChange(e);
                         }}
                         value={MALE}
                     />
@@ -95,9 +95,9 @@ const Navbar = props => {
                     <input
                         type='radio'
                         name='gender'
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
-                            props.onGenderChange(e);
+                            props.onAuthorGenderChange(e);
                         }}
                         value={FEMALE}
                     />

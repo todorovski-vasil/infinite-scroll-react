@@ -39,6 +39,18 @@ const filterByGenre = (books, genreFilter) =>
 const applyFilters = (books, { genreFilter, genderFilter }) =>
     filterByGender(filterByGenre(books, genreFilter), genderFilter);
 
+const applyFiltersAsync = (books, { genreFilter, authorGenderFilter }) =>
+    new Promise((resolve) => {
+        setTimeout(() =>
+            resolve(
+                filterByGender(
+                    filterByGenre(books, genreFilter),
+                    authorGenderFilter
+                )
+            )
+        );
+    });
+
 const orderByBookName = (books, { genreFilter, genderFilter }) =>
     applyFilters(sortByBookName(books), { genreFilter, genderFilter });
 
@@ -53,6 +65,7 @@ export {
     filterByGender,
     filterByGenre,
     applyFilters,
+    applyFiltersAsync,
     orderByBookName,
     orderByAuthorName,
 };

@@ -15,8 +15,18 @@ export const setGenreFilter = (filter) => ({
     filter: filter,
 });
 
+export const saveGenreFilter = (filter) => ({
+    type: actionTypes.SAVE_GENRE_FILTER,
+    filter: filter,
+});
+
 export const setAuthorGenderFilter = (filter) => ({
     type: actionTypes.SET_AUTHOR_GENDER_FILTER,
+    filter: filter,
+});
+
+export const saveAuthorGenderFilter = (filter) => ({
+    type: actionTypes.SAVE_AUTHOR_GENDER_FILTER,
     filter: filter,
 });
 
@@ -33,4 +43,9 @@ export const setBooks = (books) => ({
 export const setLoading = (loading) => ({
     type: actionTypes.SET_LOADING,
     loading: loading,
+});
+
+export const setStartIndex = (index) => ({
+    type: actionTypes.SET_START_INDEX,
+    index: index,
 });
