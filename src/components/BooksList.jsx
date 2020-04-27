@@ -24,7 +24,13 @@ if (indexedDBAvailable) {
 function BooksList(props) {
     const genres = useSelector((state) => state.genres);
     const availableBooks = useSelector((state) => state.availableBooks);
-    const visibleBooks = useSelector((state) => state.visibleBooks);
+    // const visibleBooks = useSelector((state) => state.visibleBooks);
+    const books = useSelector((state) =>
+        state.availableBooks.slice(
+            state.startIndex,
+            state.startIndex + PAGE_SIZE
+        )
+    );
     const startIndex = useSelector((state) => state.startIndex);
     const genreFilter = useSelector((state) => state.genreFilter);
     const authorGenderFilter = useSelector((state) => state.authorGenderFilter);
@@ -88,7 +94,8 @@ function BooksList(props) {
                 }}
             ></Navbar>
             <InfiniteList
-                visibleBooks={visibleBooks}
+                // visibleBooks={visibleBooks}
+                visibleBooks={books}
                 handleScroll={handleScroll}
                 scrollTriggerRatio={PAGE_WINDOW_SHIFT}
             />

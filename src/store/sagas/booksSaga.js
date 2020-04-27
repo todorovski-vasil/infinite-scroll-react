@@ -19,7 +19,7 @@ function* setOrderByBookNameSaga(action) {
         yield put(actions.setAvailableBooks(sortedBooks));
     } catch (error) {
         // log error
-        console.error('in setOrderByBookNameSaga: ' + error);
+        yield console.error('in setOrderByBookNameSaga: ' + error);
     } finally {
         yield put(actions.setLoading(false));
     }
@@ -35,7 +35,7 @@ function* setOrderByAuthorNameSaga(action) {
         yield put(actions.setAvailableBooks(sortedBooks));
     } catch (error) {
         // log error
-        console.error('in setOrderByAuthorNameSaga: ' + error);
+        yield console.error('in setOrderByAuthorNameSaga: ' + error);
     } finally {
         yield put(actions.setLoading(false));
     }
@@ -60,7 +60,7 @@ function* setGenreFilterSaga(action) {
         yield put(actions.setAvailableBooks(filteredBooks));
     } catch (error) {
         // log error
-        console.error('in setGenreFilterSaga: ' + error);
+        yield console.error('in setGenreFilterSaga: ' + error);
     } finally {
         yield put(actions.setLoading(false));
     }
@@ -85,26 +85,11 @@ function* setAuthorGenderFilterSaga(action) {
         yield put(actions.setAvailableBooks(filteredBooks));
     } catch (error) {
         // log error
-        console.error('in setAuthorGenderFilterSaga: ' + error);
+        yield console.error('in setAuthorGenderFilterSaga: ' + error);
     } finally {
         yield put(actions.setLoading(false));
     }
 }
-
-// function* setBooks(action) {
-//     yield put(actions.setLoading(true));
-
-//     const books = yield select(getBooks);
-
-//     try {
-//         yield put({actions.setAvailableBooks(sortedBooks));
-//     } catch (error) {
-//         // log error
-//         console.error('in setOrderByBookNameSaga: ' + error);
-//     } finally {
-//         yield put(actions.setLoading(false));
-//     }
-// }
 
 // use them in parallel
 export function* rootSaga() {
@@ -121,5 +106,4 @@ export function* rootSaga() {
         actionTypes.SET_AUTHOR_GENDER_FILTER,
         setAuthorGenderFilterSaga
     );
-    // yield takeLatest('CREATE_USER', createUser);
 }
