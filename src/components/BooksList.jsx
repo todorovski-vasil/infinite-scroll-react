@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
@@ -9,6 +9,7 @@ import {
     initialState as initialBooksState,
 } from '../store/reducers/books';
 import { applyBooksMiddleware } from '../store/middleware/booksMiddleware';
+import { useReducerWithMiddleware } from '../store/middleware/useReducerWithMiddleware';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -25,8 +26,20 @@ if (indexedDBAvailable) {
     );
 }
 
+const loggingMiddleware = (state) => (next) => (action) => {
+    console.log('dispatching', action);
+    let result = next(action);
+    console.log('next state', state);
+    return result;
+};
+
 function BooksList(props) {
-    const [state, booksDispatch] = useReducer(booksReducer, initialBooksState);
+    // const [state, booksDispatch] = useReducer(booksReducer, initialBooksState);
+    const [state, booksDispatch] = useReducerWithMiddleware(
+        booksReducer,
+        initialBooksState,
+        [loggingMiddleware]
+    );
 
     const dispatch = applyBooksMiddleware(state, booksDispatch);
 
@@ -40,26 +53,14 @@ function BooksList(props) {
         isLoading,
     } = state;
 
-    useEffect(() => {
-        booksDispatch(actions.setLoading(true));
-        booksDispatch(
+    const initState = useCallback(() => {
+        dispatch(actions.setLoading(true));
+        dispatch(
             actions.setBooks({ books: props.books, genres: props.genres })
         );
-    }, [props.books, props.genres, booksDispatch]);
+    }, [props.books, props.genres, dispatch]);
 
-    // const initState = useCallback(
-    //     (books, genres) => {
-    //         dispatch(actions.setLoading(true));
-    //         dispatch(actions.setBooks({ books, genres }));
-    //     },
-    //     [dispatch]
-    // );
-
-    // useEffect(() => initState(props.books, props.genres), [
-    //     props.books,
-    //     props.genres,
-    //     initState,
-    // ]);
+    useEffect(initState, [props.books, props.genres]);
 
     const changeScrollIndex = useCallback(
         (newIndex) => {
