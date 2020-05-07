@@ -10,6 +10,7 @@ import {
 } from '../store/reducers/books';
 import { applyBooksMiddleware } from '../store/middleware/booksMiddleware';
 import { useReducerWithMiddleware } from '../store/middleware/useReducerWithMiddleware';
+import { loggerMiddleware } from '../store/middleware/loggerMiddleware';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -26,19 +27,12 @@ if (indexedDBAvailable) {
     );
 }
 
-const loggingMiddleware = (state) => (next) => (action) => {
-    console.log('dispatching', action);
-    let result = next(action);
-    console.log('next state', state);
-    return result;
-};
-
 function BooksList(props) {
     // const [state, booksDispatch] = useReducer(booksReducer, initialBooksState);
     const [state, booksDispatch] = useReducerWithMiddleware(
         booksReducer,
         initialBooksState,
-        [loggingMiddleware]
+        [loggerMiddleware]
     );
 
     const dispatch = applyBooksMiddleware(state, booksDispatch);
