@@ -60,22 +60,17 @@ const setGenreFilter = (
     applyFilters(books, genreFilter, authorGenderFilter, dispatch);
 };
 
-export const applyBooksMiddleware = (state, dispatch) => (action) => {
+export const booksMiddleware = (state) => (dispatch) => (action) => {
     switch (action.type) {
         case actionTypes.SET_ORDER_BY_BOOK_NAME:
-            setOrderByName(state, dispatch);
-            break;
+            return setOrderByName(state, dispatch);
         case actionTypes.SET_ORDER_BY_AUTHOR_NAME:
-            setOrderByAuthorName(state, dispatch);
-            break;
+            return setOrderByAuthorName(state, dispatch);
         case actionTypes.SET_GENRE_FILTER:
-            setGenreFilter(action.filter, state, dispatch);
-            break;
+            return setGenreFilter(action.filter, state, dispatch);
         case actionTypes.SET_AUTHOR_GENDER_FILTER:
-            setAuthorGenderFilter(action.filter, state, dispatch);
-            break;
+            return setAuthorGenderFilter(action.filter, state, dispatch);
         default:
-            dispatch(action);
-            break;
+            return dispatch(action);
     }
 };
