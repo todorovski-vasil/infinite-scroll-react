@@ -41,13 +41,15 @@ const applyFilters = (books, { genreFilter, genderFilter }) =>
 
 const applyFiltersAsync = (books, { genreFilter, authorGenderFilter }) =>
     new Promise((resolve) => {
-        setTimeout(() =>
-            resolve(
-                filterByGender(
-                    filterByGenre(books, genreFilter),
-                    authorGenderFilter
-                )
-            )
+        setTimeout(
+            () =>
+                resolve(
+                    filterByGender(
+                        filterByGenre(books, genreFilter),
+                        authorGenderFilter
+                    )
+                ),
+            0
         );
     });
 

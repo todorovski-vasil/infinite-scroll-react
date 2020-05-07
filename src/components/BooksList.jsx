@@ -1,10 +1,14 @@
-import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useReducer, useEffect } from 'react';
 
 import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
 import Loader from './Loader/Loader';
 import * as actions from '../store/actions/books';
+import {
+    booksReducer,
+    initialState as initialBooksState,
+} from '../store/reducers/books';
+import { applyBooksMiddleware } from '../store/middleware/booksMiddleware';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -22,40 +26,62 @@ if (indexedDBAvailable) {
 }
 
 function BooksList(props) {
-    const genres = useSelector((state) => state.genres);
-    const availableBooks = useSelector((state) => state.availableBooks);
-    // const visibleBooks = useSelector((state) => state.visibleBooks);
-    const books = useSelector((state) =>
-        state.availableBooks.slice(
-            state.startIndex,
-            state.startIndex + PAGE_SIZE
-        )
-    );
-    const startIndex = useSelector((state) => state.startIndex);
-    const genreFilter = useSelector((state) => state.genreFilter);
-    const authorGenderFilter = useSelector((state) => state.authorGenderFilter);
-    const isLoading = useSelector((state) => state.isLoading);
+    const [state, booksDispatch] = useReducer(booksReducer, initialBooksState);
 
-    const dispatch = useDispatch();
+    const dispatch = applyBooksMiddleware(state, booksDispatch);
+
+    const {
+        visibleBooks,
+        genres,
+        availableBooks,
+        startIndex,
+        genreFilter,
+        authorGenderFilter,
+        isLoading,
+    } = state;
+
+    useEffect(() => {
+        booksDispatch(actions.setLoading(true));
+        booksDispatch(
+            actions.setBooks({ books: props.books, genres: props.genres })
+        );
+    }, [props.books, props.genres, booksDispatch]);
+
+    // const initState = useCallback(
+    //     (books, genres) => {
+    //         dispatch(actions.setLoading(true));
+    //         dispatch(actions.setBooks({ books, genres }));
+    //     },
+    //     [dispatch]
+    // );
+
+    // useEffect(() => initState(props.books, props.genres), [
+    //     props.books,
+    //     props.genres,
+    //     initState,
+    // ]);
+
+    const changeScrollIndex = useCallback(
+        (newIndex) => {
+            dispatch(actions.setStartIndex(newIndex));
+        },
+        [dispatch]
+    );
 
     const handleScroll = useCallback(
         (direction) => {
             switch (direction) {
                 case 'down':
                     if (startIndex + PAGE_SIZE < availableBooks.length) {
-                        dispatch(
-                            actions.setStartIndex(
-                                startIndex + PAGE_SIZE * PAGE_WINDOW_SHIFT
-                            )
+                        changeScrollIndex(
+                            startIndex + PAGE_SIZE * PAGE_WINDOW_SHIFT
                         );
                     }
                     break;
                 case 'up':
                     if (startIndex >= PAGE_SIZE * PAGE_WINDOW_SHIFT) {
-                        dispatch(
-                            actions.setStartIndex(
-                                startIndex - PAGE_SIZE * PAGE_WINDOW_SHIFT
-                            )
+                        changeScrollIndex(
+                            startIndex - PAGE_SIZE * PAGE_WINDOW_SHIFT
                         );
                     }
                     break;
@@ -66,7 +92,7 @@ function BooksList(props) {
                     );
             }
         },
-        [startIndex, availableBooks, dispatch]
+        [startIndex, availableBooks, changeScrollIndex]
     );
 
     return (
@@ -77,25 +103,28 @@ function BooksList(props) {
                 genderFilter={authorGenderFilter}
                 genres={['', ...genres]}
                 onOrderByBookName={() => {
+                    // setOrderByName();
                     dispatch(actions.setOrderByName());
                 }}
                 onOrderByAuthorName={() => {
+                    // setOrderByAuthorName();
                     dispatch(actions.setOrderByAuthorName());
                 }}
                 onAuthorGenderChange={(event) => {
                     const filter =
                         event.target.value === ALL ? null : event.target.value;
+                    // setAuthorGenderFilter(filter);
                     dispatch(actions.setAuthorGenderFilter(filter));
                 }}
                 onGenreChange={(event) => {
                     const filter =
                         event.target.value === ALL ? null : event.target.value;
+                    // setGenreFilter(filter);
                     dispatch(actions.setGenreFilter(filter));
                 }}
             ></Navbar>
             <InfiniteList
-                // visibleBooks={visibleBooks}
-                visibleBooks={books}
+                visibleBooks={visibleBooks}
                 handleScroll={handleScroll}
                 scrollTriggerRatio={PAGE_WINDOW_SHIFT}
             />

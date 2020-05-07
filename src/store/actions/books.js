@@ -35,9 +35,9 @@ export const setAvailableBooks = (books) => ({
     avBooks: books,
 });
 
-export const setBooks = (books) => ({
+export const setBooks = (data) => ({
     type: actionTypes.SET_BOOKS,
-    books: books,
+    data: data,
 });
 
 export const setLoading = (loading) => ({

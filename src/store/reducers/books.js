@@ -2,7 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 
 const PAGE_SIZE = 1000;
 
-const initialState = {
+export const initialState = {
     books: [],
     authors: [],
     genres: [],
