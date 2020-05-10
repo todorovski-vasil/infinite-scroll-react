@@ -8,7 +8,7 @@ import {
     booksReducer,
     initialState as initialBooksState,
 } from '../store/reducers/books';
-import { applyBooksMiddleware } from '../store/middleware/booksMiddleware';
+import * as transform from '../utils/bookListTransformations';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -26,9 +26,7 @@ if (indexedDBAvailable) {
 }
 
 function BooksList(props) {
-    const [state, booksDispatch] = useReducer(booksReducer, initialBooksState);
-
-    const dispatch = applyBooksMiddleware(state, booksDispatch);
+    const [state, dispatch] = useReducer(booksReducer, initialBooksState);
 
     const {
         visibleBooks,
@@ -41,25 +39,75 @@ function BooksList(props) {
     } = state;
 
     useEffect(() => {
-        booksDispatch(actions.setLoading(true));
-        booksDispatch(
+        dispatch(actions.setLoading(true));
+        dispatch(
             actions.setBooks({ books: props.books, genres: props.genres })
         );
-    }, [props.books, props.genres, booksDispatch]);
+    }, [props.books, props.genres, dispatch]);
 
-    // const initState = useCallback(
-    //     (books, genres) => {
-    //         dispatch(actions.setLoading(true));
-    //         dispatch(actions.setBooks({ books, genres }));
-    //     },
-    //     [dispatch]
-    // );
+    const setOrderByName = ({ availableBooks }, dispatch) => {
+        dispatch(actions.setLoading(true));
 
-    // useEffect(() => initState(props.books, props.genres), [
-    //     props.books,
-    //     props.genres,
-    //     initState,
-    // ]);
+        transform
+            .sortByBookNameAsync(availableBooks)
+            .then((sortedBooks) =>
+                dispatch(actions.setAvailableBooks(sortedBooks))
+            )
+            .catch((error) =>
+                console.error('in setOrderByBookNameSaga: ' + error)
+            )
+            .finally(() => dispatch(actions.setLoading(false)));
+    };
+
+    const setOrderByAuthorName = ({ availableBooks }, dispatch) => {
+        dispatch(actions.setLoading(true));
+
+        transform
+            .sortByAuthorNameAsync(availableBooks)
+            .then((sortedBooks) =>
+                dispatch(actions.setAvailableBooks(sortedBooks))
+            )
+            .catch((error) =>
+                console.error('in setOrderByAuthorNameSaga: ' + error)
+            )
+            .finally(() => dispatch(actions.setLoading(false)));
+    };
+
+    const applyFilters = (books, genreFilter, authorGenderFilter, dispatch) =>
+        transform
+            .applyFiltersAsync(books, {
+                genreFilter,
+                authorGenderFilter,
+            })
+            .then((filteredBooks) =>
+                dispatch(actions.setAvailableBooks(filteredBooks))
+            )
+            .catch((error) =>
+                console.error('in setAuthorGenderFilterSaga: ' + error)
+            )
+            .finally(() => dispatch(actions.setLoading(false)));
+
+    const setAuthorGenderFilter = (
+        authorGenderFilter,
+        { genreFilter, books },
+        dispatch
+    ) => {
+        dispatch(actions.setLoading(true));
+        dispatch(actions.saveAuthorGenderFilter(authorGenderFilter));
+
+        applyFilters(books, genreFilter, authorGenderFilter, dispatch);
+    };
+
+    const setGenreFilter = (
+        genreFilter,
+        { authorGenderFilter, books },
+        dispatch
+    ) => {
+        dispatch(actions.setLoading(true));
+        dispatch(actions.saveGenreFilter(genreFilter));
+
+        applyFilters(books, genreFilter, authorGenderFilter, dispatch);
+    };
 
     const changeScrollIndex = useCallback(
         (newIndex) => {
@@ -103,24 +151,20 @@ function BooksList(props) {
                 genderFilter={authorGenderFilter}
                 genres={['', ...genres]}
                 onOrderByBookName={() => {
-                    // setOrderByName();
-                    dispatch(actions.setOrderByName());
+                    setOrderByName(state, dispatch);
                 }}
                 onOrderByAuthorName={() => {
-                    // setOrderByAuthorName();
-                    dispatch(actions.setOrderByAuthorName());
+                    setOrderByAuthorName(state, dispatch);
                 }}
                 onAuthorGenderChange={(event) => {
                     const filter =
                         event.target.value === ALL ? null : event.target.value;
-                    // setAuthorGenderFilter(filter);
-                    dispatch(actions.setAuthorGenderFilter(filter));
+                    setAuthorGenderFilter(filter, state, dispatch);
                 }}
                 onGenreChange={(event) => {
                     const filter =
                         event.target.value === ALL ? null : event.target.value;
-                    // setGenreFilter(filter);
-                    dispatch(actions.setGenreFilter(filter));
+                    setGenreFilter(filter, state, dispatch);
                 }}
             ></Navbar>
             <InfiniteList
