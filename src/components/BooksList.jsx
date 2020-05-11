@@ -1,16 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import Navbar from './Navbar/Navbar';
 import InfiniteList from './InfiniteList';
 import Loader from './Loader/Loader';
+import { booksContext } from '../App';
 import * as actions from '../store/actions/books';
-import {
-    booksReducer,
-    initialState as initialBooksState,
-} from '../store/reducers/books';
-import { useReducerWithMiddleware } from '../store/middleware/useReducerWithMiddleware';
-import { loggerMiddleware } from '../store/middleware/loggerMiddleware';
-import { booksMiddleware } from '../store/middleware/booksMiddleware';
 
 const ALL = 'all';
 const PAGE_SIZE = 1000;
@@ -27,14 +21,8 @@ if (indexedDBAvailable) {
     );
 }
 
-const middleware = [booksMiddleware, loggerMiddleware];
-
-function BooksList(props) {
-    const [state, dispatch] = useReducerWithMiddleware(
-        booksReducer,
-        initialBooksState,
-        middleware
-    );
+function BooksList() {
+    const context = useContext(booksContext);
 
     const {
         visibleBooks,
@@ -44,16 +32,8 @@ function BooksList(props) {
         genreFilter,
         authorGenderFilter,
         isLoading,
-    } = state;
-
-    const initState = useCallback(() => {
-        dispatch(actions.setLoading(true));
-        dispatch(
-            actions.setBooks({ books: props.books, genres: props.genres })
-        );
-    }, [props.books, props.genres, dispatch]);
-
-    useEffect(initState, [props.books, props.genres]);
+    } = context.state;
+    const dispatch = context.dispatch;
 
     const changeScrollIndex = useCallback(
         (newIndex) => {
@@ -92,31 +72,35 @@ function BooksList(props) {
     return (
         <div>
             {isLoading ? <Loader /> : null}
-            <Navbar
-                genreFilter={genreFilter}
-                genderFilter={authorGenderFilter}
-                genres={['', ...genres]}
-                onOrderByBookName={() => {
-                    // setOrderByName();
-                    dispatch(actions.setOrderByName());
-                }}
-                onOrderByAuthorName={() => {
-                    // setOrderByAuthorName();
-                    dispatch(actions.setOrderByAuthorName());
-                }}
-                onAuthorGenderChange={(event) => {
-                    const filter =
-                        event.target.value === ALL ? null : event.target.value;
-                    // setAuthorGenderFilter(filter);
-                    dispatch(actions.setAuthorGenderFilter(filter));
-                }}
-                onGenreChange={(event) => {
-                    const filter =
-                        event.target.value === ALL ? null : event.target.value;
-                    // setGenreFilter(filter);
-                    dispatch(actions.setGenreFilter(filter));
-                }}
-            ></Navbar>
+            {genres.length !== 0 ? (
+                <Navbar
+                    genreFilter={genreFilter}
+                    genderFilter={authorGenderFilter}
+                    genres={['', ...genres]}
+                    onOrderByBookName={() => {
+                        dispatch(actions.setOrderByName());
+                    }}
+                    onOrderByAuthorName={() => {
+                        dispatch(actions.setOrderByAuthorName());
+                    }}
+                    onAuthorGenderChange={(event) => {
+                        const filter =
+                            event.target.value === ALL
+                                ? null
+                                : event.target.value;
+                        dispatch(actions.setAuthorGenderFilter(filter));
+                    }}
+                    onGenreChange={(event) => {
+                        const filter =
+                            event.target.value === ALL
+                                ? null
+                                : event.target.value;
+                        dispatch(actions.setGenreFilter(filter));
+                    }}
+                ></Navbar>
+            ) : (
+                <h5>Loading data...</h5>
+            )}
             <InfiniteList
                 visibleBooks={visibleBooks}
                 handleScroll={handleScroll}

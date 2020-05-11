@@ -1,52 +1,49 @@
-import React, { useState, useEffect } from 'react';
-// import { useDispatch } from 'react-redux';
+import React, { useEffect, createContext, useCallback } from 'react';
 
 import './App.css';
 
-// import List from './components/List';
 import BooksList from './components/BooksList';
 import { getBookstore } from './utils/generateBookstoreData';
-// import Loader from './components/Loader/Loader';
-// import { SET_BOOKS } from './store/actions/actionTypes';
+import {
+    booksReducer,
+    initialState as initialBooksState,
+} from './store/reducers/books';
+import * as actions from './store/actions/books';
+import { useReducerWithMiddleware } from './store/middleware/useReducerWithMiddleware';
+import { loggerMiddleware } from './store/middleware/loggerMiddleware';
+import { booksMiddleware } from './store/middleware/booksMiddleware';
 
-// console.log({ createSagaMiddleware });
+const middleware = [booksMiddleware, loggerMiddleware];
+
+export const booksContext = createContext();
 
 function App() {
-    // const dispatch = useDispatch();
-    // const [isLoading, setIsLoading] = useState(true);
+    const [state, dispatch] = useReducerWithMiddleware(
+        booksReducer,
+        initialBooksState,
+        middleware
+    );
 
-    // useEffect(() => {
-    //     const bookstoreData = getBookstore();
-    //     dispatch({
-    //         type: SET_BOOKS,
-    //         data: {
-    //             books: bookstoreData.books,
-    //             genres: bookstoreData.genres,
-    //         },
-    //     });
-    //     setIsLoading(false);
-    // }, [dispatch]);
+    const initData = useCallback(() => {
+        dispatch(actions.setLoading(true));
+        setTimeout(() => {
+            const bookstore = getBookstore();
+            dispatch(
+                actions.setBooks({
+                    books: bookstore.books,
+                    genres: bookstore.genres,
+                })
+            );
+        }, 0);
+    }, [dispatch]);
 
-    const [bookstoreData, setBookstoreData] = useState({
-        authors: [],
-        books: [],
-        genres: [],
-    });
-
-    useEffect(() => setBookstoreData(getBookstore()), []);
+    useEffect(initData, []);
 
     return (
         <>
-            {/* <List /> */}
-            {/* {isLoading ? (
-                <Loader />
-            ) : ( */}
-            <BooksList
-                authors={bookstoreData.authors}
-                books={bookstoreData.books}
-                genres={bookstoreData.genres}
-            ></BooksList>
-            {/* )} */}
+            <booksContext.Provider value={{ state, dispatch }}>
+                <BooksList />
+            </booksContext.Provider>
         </>
     );
 }
