@@ -29,8 +29,6 @@ function BooksList() {
         genres,
         availableBooks,
         startIndex,
-        genreFilter,
-        authorGenderFilter,
         isLoading,
     } = context.state;
     const dispatch = context.dispatch;
@@ -72,35 +70,7 @@ function BooksList() {
     return (
         <div>
             {isLoading ? <Loader /> : null}
-            {genres.length !== 0 ? (
-                <Navbar
-                    genreFilter={genreFilter}
-                    genderFilter={authorGenderFilter}
-                    genres={['', ...genres]}
-                    onOrderByBookName={() => {
-                        dispatch(actions.setOrderByName());
-                    }}
-                    onOrderByAuthorName={() => {
-                        dispatch(actions.setOrderByAuthorName());
-                    }}
-                    onAuthorGenderChange={(event) => {
-                        const filter =
-                            event.target.value === ALL
-                                ? null
-                                : event.target.value;
-                        dispatch(actions.setAuthorGenderFilter(filter));
-                    }}
-                    onGenreChange={(event) => {
-                        const filter =
-                            event.target.value === ALL
-                                ? null
-                                : event.target.value;
-                        dispatch(actions.setGenreFilter(filter));
-                    }}
-                ></Navbar>
-            ) : (
-                <h5>Loading data...</h5>
-            )}
+            {genres.length !== 0 ? <Navbar /> : <h5>Loading data...</h5>}
             <InfiniteList
                 visibleBooks={visibleBooks}
                 handleScroll={handleScroll}

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
+
+import { booksContext } from '../App';
 
 const FINANCE = 'finance',
     HOROR = 'horror';
 const MALE = 'M';
 
-const getCSSClasses = book => {
+const getCSSClasses = (book) => {
     let bookClasses = 'list-group-item ';
     if (
         book.genre === HOROR &&
@@ -23,7 +25,7 @@ const getCSSClasses = book => {
     return bookClasses;
 };
 
-const getLabel = book =>
+const getLabel = (book) =>
     book.name +
     ' by ' +
     (book.author.gender === MALE ? 'Mr. ' : 'Mrs. ') +
@@ -34,7 +36,9 @@ const getLabel = book =>
     book.publishedDate.toDateString();
 
 function InfiniteList(props) {
-    const onScroll = event => {
+    const { state } = useContext(booksContext);
+
+    const onScroll = (event) => {
         event.preventDefault();
 
         const { scrollTop, scrollHeight } = event.nativeEvent.target;
@@ -49,7 +53,7 @@ function InfiniteList(props) {
     return (
         <div className='infiniteList' onScroll={onScroll}>
             <ul className='container list-group'>
-                {props.visibleBooks.map(book => {
+                {props.visibleBooks.map((book) => {
                     return (
                         <li key={book.isbn} className={getCSSClasses(book)}>
                             {getLabel(book)}
