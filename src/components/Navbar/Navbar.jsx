@@ -8,7 +8,7 @@ const ALL = 'all';
 const MALE = 'M',
     FEMALE = 'F';
 
-const Navbar = (props) => {
+const Navbar = () => {
     const { state, dispatch } = useContext(booksContext);
 
     const genres = ['', ...state.genres];
@@ -53,7 +53,7 @@ const Navbar = (props) => {
         genderFClasses += ' active';
     }
 
-    return (
+    return genres.length > 1 ? (
         <div className='bookListNavbar'>
             <button
                 onClick={orderByBookName}
@@ -114,6 +114,8 @@ const Navbar = (props) => {
                 </label>
             </div>
         </div>
+    ) : (
+        <h5>Loading data...</h5>
     );
 };
 

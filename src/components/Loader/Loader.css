@@ -34,8 +34,8 @@
 .cssload-whirlpool::before {
     content: '';
     margin: -40px 0 0 -40px;
-    height: 77px;
-    width: 77px;
+    height: 80px;
+    width: 80px;
     animation: cssload-rotate 1150ms linear infinite;
     -o-animation: cssload-rotate 1150ms linear infinite;
     -ms-animation: cssload-rotate 1150ms linear infinite;
@@ -45,9 +45,9 @@
 
 .cssload-whirlpool::after {
     content: '';
-    margin: -51px 0 0 -51px;
-    height: 98px;
-    width: 98px;
+    margin: -48px 0 0 -48px;
+    height: 96px;
+    width: 96px;
     animation: cssload-rotate 2300ms linear infinite;
     -o-animation: cssload-rotate 2300ms linear infinite;
     -ms-animation: cssload-rotate 2300ms linear infinite;

@@ -1,10 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 
 import { booksContext } from '../App';
+import * as actions from '../store/actions/books';
 
 const FINANCE = 'finance',
     HOROR = 'horror';
 const MALE = 'M';
+
+const PAGE_SIZE = 1000;
+const PAGE_WINDOW_SHIFT = 0.1;
 
 const getCSSClasses = (book) => {
     let bookClasses = 'list-group-item ';
@@ -35,25 +39,61 @@ const getLabel = (book) =>
     ', published on: ' +
     book.publishedDate.toDateString();
 
-function InfiniteList(props) {
-    const { state } = useContext(booksContext);
+function InfiniteList() {
+    const { state, dispatch } = useContext(booksContext);
+
+    const { startIndex, availableBooks, visibleBooks } = state;
+
+    const changeScrollIndex = useCallback(
+        (newIndex) => {
+            dispatch(actions.setStartIndex(newIndex));
+        },
+        [dispatch]
+    );
+
+    const handleScroll = useCallback(
+        (direction) => {
+            switch (direction) {
+                case 'down':
+                    if (startIndex + PAGE_SIZE < availableBooks.length) {
+                        changeScrollIndex(
+                            startIndex + PAGE_SIZE * PAGE_WINDOW_SHIFT
+                        );
+                    }
+                    break;
+                case 'up':
+                    if (startIndex >= PAGE_SIZE * PAGE_WINDOW_SHIFT) {
+                        changeScrollIndex(
+                            startIndex - PAGE_SIZE * PAGE_WINDOW_SHIFT
+                        );
+                    }
+                    break;
+                default:
+                    console.error(
+                        'unsuported scroll direction received in Booklist.jsx handleScroll handler: ' +
+                            direction
+                    );
+            }
+        },
+        [startIndex, availableBooks, changeScrollIndex]
+    );
 
     const onScroll = (event) => {
         event.preventDefault();
 
         const { scrollTop, scrollHeight } = event.nativeEvent.target;
 
-        if (scrollTop > scrollHeight * (1 - props.scrollTriggerRatio)) {
-            props.handleScroll('down');
-        } else if (scrollTop < scrollHeight * props.scrollTriggerRatio) {
-            props.handleScroll('up');
+        if (scrollTop > scrollHeight * (1 - PAGE_WINDOW_SHIFT)) {
+            handleScroll('down');
+        } else if (scrollTop < scrollHeight * PAGE_WINDOW_SHIFT) {
+            handleScroll('up');
         }
     };
 
     return (
         <div className='infiniteList' onScroll={onScroll}>
             <ul className='container list-group'>
-                {props.visibleBooks.map((book) => {
+                {visibleBooks.map((book) => {
                     return (
                         <li key={book.isbn} className={getCSSClasses(book)}>
                             {getLabel(book)}
