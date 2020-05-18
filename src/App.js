@@ -3,13 +3,13 @@ import React, { useEffect, createContext, useCallback } from 'react';
 import './App.css';
 
 import BooksList from './components/BooksList';
-import { getBookstore } from './utils/generateBookstoreData';
+import { getBookstoreGenres } from './utils/generateBookstoreData';
 import {
     booksReducer,
     initialState as initialBooksState,
 } from './store/reducers/books';
 import * as actions from './store/actions/books';
-import { useReducerWithMiddleware } from './store/middleware/useReducerWithMiddleware';
+import { useReducerWithMiddleware } from './hooks/useReducerWithMiddleware';
 import { loggerMiddleware } from './store/middleware/loggerMiddleware';
 import { booksMiddleware } from './store/middleware/booksMiddleware';
 
@@ -27,13 +27,8 @@ function App() {
     const initData = useCallback(() => {
         dispatch(actions.setLoading(true));
         setTimeout(() => {
-            const bookstore = getBookstore();
-            dispatch(
-                actions.setBooks({
-                    books: bookstore.books,
-                    genres: bookstore.genres,
-                })
-            );
+            dispatch(actions.setGenres(getBookstoreGenres()));
+            dispatch(actions.getVisibleBooks({}));
         }, 0);
     }, [dispatch]);
 

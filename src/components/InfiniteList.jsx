@@ -42,7 +42,7 @@ const getLabel = (book) =>
 function InfiniteList() {
     const { state, dispatch } = useContext(booksContext);
 
-    const { startIndex, availableBooks, visibleBooks } = state;
+    const { startIndex, visibleBooks, isLoading } = state;
 
     const changeScrollIndex = useCallback(
         (newIndex) => {
@@ -55,14 +55,14 @@ function InfiniteList() {
         (direction) => {
             switch (direction) {
                 case 'down':
-                    if (startIndex + PAGE_SIZE < availableBooks.length) {
+                    if (visibleBooks.length === PAGE_SIZE) {
                         changeScrollIndex(
                             startIndex + PAGE_SIZE * PAGE_WINDOW_SHIFT
                         );
                     }
                     break;
                 case 'up':
-                    if (startIndex >= PAGE_SIZE * PAGE_WINDOW_SHIFT) {
+                    if (startIndex > 0) {
                         changeScrollIndex(
                             startIndex - PAGE_SIZE * PAGE_WINDOW_SHIFT
                         );
@@ -75,18 +75,20 @@ function InfiniteList() {
                     );
             }
         },
-        [startIndex, availableBooks, changeScrollIndex]
+        [startIndex, visibleBooks, changeScrollIndex]
     );
 
     const onScroll = (event) => {
         event.preventDefault();
 
-        const { scrollTop, scrollHeight } = event.nativeEvent.target;
+        if (!isLoading) {
+            const { scrollTop, scrollHeight } = event.nativeEvent.target;
 
-        if (scrollTop > scrollHeight * (1 - PAGE_WINDOW_SHIFT)) {
-            handleScroll('down');
-        } else if (scrollTop < scrollHeight * PAGE_WINDOW_SHIFT) {
-            handleScroll('up');
+            if (scrollTop > scrollHeight * (1 - PAGE_WINDOW_SHIFT)) {
+                handleScroll('down');
+            } else if (scrollTop < scrollHeight * PAGE_WINDOW_SHIFT) {
+                handleScroll('up');
+            }
         }
     };
 

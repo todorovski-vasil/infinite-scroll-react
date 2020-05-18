@@ -12,12 +12,14 @@ const genres = [FICTION, DRAMA, POETRY, FINANCE, HOROR];
 const books = [];
 const authors = [];
 
+const getBookstoreGenres = () => genres;
+
 const getBookstore = () => {
     if (!authors.length) {
         for (let i = numAuthors; i > 0; i--) {
             authors.push({
                 name: 'Author ' + i + Math.floor(Math.random() * numAuthors),
-                gender: Math.floor(Math.random() * 2) ? MALE : FEMALE
+                gender: Math.floor(Math.random() * 2) ? MALE : FEMALE,
             });
         }
     }
@@ -46,7 +48,7 @@ const getBookstore = () => {
                 name: 'Book about ' + Math.floor(Math.random() * numBooks),
                 author,
                 genre,
-                publishedDate
+                publishedDate,
             });
         }
     }
@@ -54,8 +56,8 @@ const getBookstore = () => {
     return {
         books,
         authors,
-        genres
+        genres,
     };
 };
 
-export { getBookstore };
+export { getBookstore, getBookstoreGenres };
