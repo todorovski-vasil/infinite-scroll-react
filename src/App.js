@@ -3,7 +3,6 @@ import React, { useEffect, createContext, useCallback } from 'react';
 import './App.css';
 
 import BooksList from './components/BooksList';
-import { getBookstoreGenres } from './utils/generateBookstoreData';
 import {
     booksReducer,
     initialState as initialBooksState,
@@ -27,7 +26,7 @@ function App() {
     const initData = useCallback(() => {
         dispatch(actions.setLoading(true));
         setTimeout(() => {
-            dispatch(actions.setGenres(getBookstoreGenres()));
+            dispatch(actions.getGenres());
             dispatch(actions.getVisibleBooks({}));
         }, 0);
     }, [dispatch]);

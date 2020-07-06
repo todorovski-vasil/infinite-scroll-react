@@ -1,4 +1,23 @@
-const API = '/books';
+const BOOKS_API = '/books';
+const GENRES_API = '/genres';
+
+export const getGenres = () => {
+    const url = GENRES_API;
+
+    return fetch(url)
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                throw new Error(
+                    'Status: ' + res.status + ', on fetching from ' + url
+                );
+            }
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
 
 export const getBooks = ({
     orderByBookName,
@@ -33,13 +52,10 @@ export const getBooks = ({
         )
         .join('&');
 
-    const url = API + (query ? '?' + query : '');
-
-    console.log(`url: ${url}`);
+    const url = BOOKS_API + (query ? '?' + query : '');
 
     return fetch(url)
         .then((res) => {
-            console.log(`res: ${res.ok}`);
             if (res.ok) {
                 return res.json();
             } else {

@@ -14,3 +14,4 @@ export const SET_START_INDEX = 'SET_START_INDEX';
 export const SAVE_START_INDEX = 'SAVE_START_INDEX';
 export const GET_VISIBLE_BOOKS = 'GET_VISIBLE_BOOKS';
 export const SET_GENRES = 'SET_GENRES';
+export const GET_GENRES = 'GET_GENRES';

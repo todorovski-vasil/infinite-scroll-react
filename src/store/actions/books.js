@@ -79,3 +79,7 @@ export const setGenres = (genres) => ({
     type: actionTypes.SET_GENRES,
     genres: genres,
 });
+
+export const getGenres = () => ({
+    type: actionTypes.GET_GENRES,
+});
